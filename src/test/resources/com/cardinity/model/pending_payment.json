@@ -1,0 +1,24 @@
+{
+  "id": "8e037fbb-fe5b-4781-b109-b3e93d5f2c0d",
+  "amount": "20.00",
+  "currency": "EUR",
+  "created": "2014-12-17T09:43:31.123Z",
+  "type": "authorization",
+  "live": false,
+  "status": "pending",
+  "order_id": "1234567",
+  "description": "some description",
+  "country": "LT",
+  "payment_method": "card",
+  "payment_instrument": {
+    "card_brand": "Visa",
+    "pan": "4447",
+    "exp_year": 2017,
+    "exp_month": 5,
+    "holder": "John Smith"
+  },
+  "authorization_information": {
+    "url": "https://authorization.url/auth",
+    "data": "eJxdUl1vwjagsagsagsagasgasgsagasgsa"
+  }
+}

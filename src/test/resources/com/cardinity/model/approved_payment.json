@@ -1,0 +1,20 @@
+{
+  "id": "90095d47-11bb-468b-8764-fd4fbb49a9f9",
+  "amount": "15.00",
+  "currency": "EUR",
+  "created": "2014-12-19T11:52:53.3Z",
+  "type": "authorization",
+  "live": false,
+  "status": "approved",
+  "order_id": "123456",
+  "description": "some description",
+  "country": "LT",
+  "payment_method": "card",
+  "payment_instrument": {
+    "card_brand": "Visa",
+    "pan": "1111",
+    "exp_year": 2016,
+    "exp_month": 12,
+    "holder": "Mike Dough"
+  }
+}

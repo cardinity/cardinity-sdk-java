@@ -1,0 +1,41 @@
+[
+  {
+    "id": "cb5e1c95-7685-4499-a2b1-ae0f28297b92",
+    "amount": "20.00",
+    "currency": "EUR",
+    "created": "2014-12-17T09:46:11Z",
+    "type": "authorization",
+    "live": false,
+    "description": "some description",
+    "status": "declined",
+    "error": "33333: 3D Secure Authorization Failed.",
+    "country": "LT",
+    "payment_method": "card",
+    "payment_instrument":{
+      "card_brand": "Visa",
+      "pan": "0006",
+      "exp_year": 2017,
+      "exp_month": 5,
+      "holder": "John Smith"
+    }
+  },
+  {
+    "id": "1379c6bb-dcd9-4669-8846-85a278c2aa7f",
+    "amount": "20.00",
+    "currency": "EUR",
+    "created": "2014-12-17T09:44:01Z",
+    "type": "authorization",
+    "live": false,
+    "description": "some description",
+    "status": "approved",
+    "country": "LT",
+    "payment_method": "card",
+    "payment_instrument":{
+      "card_brand": "Visa",
+      "pan": "4447",
+      "exp_year": 2017,
+      "exp_month": 5,
+      "holder": "John Smith"
+    }
+  }
+]
