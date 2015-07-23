@@ -1,0 +1,18 @@
+{
+  "type": "https://developers.cardinity.com/api/v1/#400",
+  "title": "Validation Failed",
+  "status": 400,
+  "detail": "The content you've send contains 2 validation errors.",
+  "errors": [
+    {
+      "field": "currency",
+      "rejected": "EGR",
+      "message": "invalid or unsupported currency"
+    },
+    {
+      "field": "payment_instrument.exp_month",
+      "rejected": 13,
+      "message": "must be between 1 and 12"
+    }
+  ]
+}

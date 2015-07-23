@@ -1,0 +1,12 @@
+{
+  "id": "25e6f869-6675-4488-bd47-ccd298f74b3f",
+  "amount": "0.50",
+  "currency": "EUR",
+  "type": "settlement",
+  "created": "2015-01-16T09:05:27Z",
+  "live": true,
+  "parent_id": "f02862aa-5dcc-4637-9ddf-b9140c2b4b06",
+  "status": "declined",
+  "error": "error",
+  "order_id": "123456"
+}

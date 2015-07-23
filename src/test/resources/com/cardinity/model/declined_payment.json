@@ -1,0 +1,21 @@
+{
+  "id": "3c4e8dcf-4e3e-4df0-9acb-622868c6c67b",
+  "amount": "150.00",
+  "currency": "EUR",
+  "created": "2015-01-07T12:23:11.12Z",
+  "type": "authorization",
+  "live": false,
+  "status": "declined",
+  "error": "3000: Do not Honor",
+  "country": "LT",
+  "order_id": "12345678",
+  "description": "some description",
+  "payment_method": "card",
+  "payment_instrument": {
+    "card_brand": "Visa",
+    "pan": "0067",
+    "exp_year": 2016,
+    "exp_month": 11,
+    "holder": "Mike Dough"
+  }
+}

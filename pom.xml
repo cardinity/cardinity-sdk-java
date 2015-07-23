@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.cardinity</groupId>
+    <artifactId>cardinity-sdk-java</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+    <name>cardinity-sdk-java</name>
+    <url>https://github.com/cardinity/cardinity-sdk-java</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <jdk.version>1.6</jdk.version>
+        <junit.version>4.10</junit.version>
+        <gson.version>2.2.4</gson.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <description>Cardinity Java SDK</description>
+    <organization>
+        <name>Cardinity</name>
+        <url>https://cardinity.com</url>
+    </organization>
+
+    <scm>
+        <connection>scm:git:git@github.com:cardinity/cardinity-sdk-java.git</connection>
+        <developerConnection>scm:git:git@github.com:cardinity/cardinity-sdk-java.git</developerConnection>
+        <url>git@github.com:cardinity/cardinity-sdk-java.git</url>
+    </scm>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${jdk.version}</source>
+                    <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
