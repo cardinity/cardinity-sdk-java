@@ -9,7 +9,22 @@
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>cardinity-sdk-java</name>
+    <description>Cardinity payments API client for Java projects</description>
     <url>https://github.com/cardinity/cardinity-sdk-java</url>
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Vaidas Jusevicius</name>
+            <email>vaidas@cardinity.com</email>
+            <organization>Cardinity</organization>
+            <organizationUrl>https://cardinity.com</organizationUrl>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,12 +47,6 @@
         </dependency>
     </dependencies>
 
-    <description>Cardinity Java SDK</description>
-    <organization>
-        <name>Cardinity</name>
-        <url>https://cardinity.com</url>
-    </organization>
-
     <scm>
         <connection>scm:git:git@github.com:cardinity/cardinity-sdk-java.git</connection>
         <developerConnection>scm:git:git@github.com:cardinity/cardinity-sdk-java.git</developerConnection>
@@ -45,7 +54,29 @@
     </scm>
 
     <build>
+        <resources>
+            <resource>
+                <directory>.</directory>
+                <includes>
+                    <include>VERSION</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -53,6 +84,42 @@
                 <configuration>
                     <source>${jdk.version}</source>
                     <target>${jdk.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.3</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.4</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <serverId>sonatype-nexus-staging</serverId>
                 </configuration>
             </plugin>
         </plugins>

@@ -11,6 +11,28 @@ Java 1.6 or later.
 
 ## Installation
 
+### Maven
+
+Add this dependency to your project's POM:
+
+```xml
+<dependency>
+  <groupId>com.cardinity</groupId>
+  <artifactId>cardinity-sdk-java</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+### Gradle
+
+Add this dependency to your project's build file:
+
+```groovy
+compile "com.cardinity:cardinity-sdk-java:1.0.0"
+```
+
+### Other
+
 Manually install the following JARs:
 
 * cardinity-sdk-java JAR from https://github.com/cardinity/cardinity-sdk-java/releases/latest
@@ -70,7 +92,9 @@ else if (result.isValid()) {
     // proceed with declined payment flow
 }
 
-/** Request was invalid. Possible reasons: wrong credentials, unsupported currency, suspended account, etc. */
+/** Request was invalid. 
+*   Possible reasons: wrong credentials, unsupported currency, suspended account, etc. 
+*/
 else {
     CardinityError error = result.getCardinityError();
     // log error details for debugging 
@@ -99,7 +123,7 @@ else if (result.isValid()) {
     // proceed with declined payment flow
 }
 
-/** Request was invalid. Possible reasons: wrong credentials, unsupported currency, suspended account, etc. */
+/** Request was invalid. */
 else {
     CardinityError error = result.getCardinityError();
     // log error details for debugging 
