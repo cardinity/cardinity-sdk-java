@@ -1,7 +1,9 @@
 package com.cardinity.rest;
 
+import com.cardinity.json.CardSerializer;
 import com.cardinity.json.PaymentDeserializer;
 import com.cardinity.json.UtcDateTypeAdapter;
+import com.cardinity.model.Card;
 import com.cardinity.model.Payment;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -15,6 +17,7 @@ public abstract class RestResource {
     public static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .registerTypeAdapter(Payment.class, new PaymentDeserializer())
+            .registerTypeAdapter(Card.class, new CardSerializer())
             .registerTypeAdapter(Date.class, new UtcDateTypeAdapter())
             .create();
     // @formatter:on

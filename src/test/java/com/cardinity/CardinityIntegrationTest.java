@@ -37,8 +37,8 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         payment.setPaymentMethod(Payment.Method.CARD);
         Card card = new Card();
         card.setPan("4111111111111111");
-        card.setCvc(123);
-        card.setExpYear(2016);
+        card.setCvc(1);
+        card.setExpYear(2020);
         card.setExpMonth(1);
         card.setHolder("Cardinity Cardinity");
         payment.setPaymentInstrument(card);

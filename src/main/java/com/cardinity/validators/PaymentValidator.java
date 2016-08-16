@@ -60,7 +60,7 @@ public class PaymentValidator implements Validator<Payment> {
         if (!ValidationUtils.validateInteger(card.getExpYear(), 2000, 2100))
             throw new ValidationException("Invalid card exp year.");
 
-        if (!ValidationUtils.validateInteger(card.getCvc(), 99, 10000))
+        if (!ValidationUtils.validateInteger(card.getCvc(), 0, 9999))
             throw new ValidationException("Invalid card cvc code. Must be 3 or 4 numbers.");
 
         if (!ValidationUtils.validateIntervalLength(card.getHolder(), 1, 32))

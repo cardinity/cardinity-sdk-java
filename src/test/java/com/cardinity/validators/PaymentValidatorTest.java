@@ -109,7 +109,7 @@ public class PaymentValidatorTest {
     @Test(expected = ValidationException.class)
     public void testValidateWrongCardCvc() throws Exception {
         Card card = (Card) payment.getPaymentInstrument();
-        card.setCvc(11);
+        card.setCvc(10000);
         paymentValidator.validate(payment);
     }
 
