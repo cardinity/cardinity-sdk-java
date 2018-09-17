@@ -202,12 +202,12 @@ public class CardinityRestClient implements RestClient {
 
     /**
      * Author: https://github.com/nacx/jclouds/commit/bfc635668fc95fc4210b25ddec031c703f694b43
-     * <p/>
+     * <p>
      * Workaround for a bug in <code>HttpURLConnection.setRequestMethod(String)</code>
      * The implementation of Sun Microsystems is throwing a <code>ProtocolException</code>
      * when the method is other than the HTTP/1.1 default methods. So
      * to use PATCH and others, we must apply this workaround.
-     * <p/>
+     * </p>
      * See issue http://java.net/jira/browse/JERSEY-639
      */
     private static void setRequestMethodBypassingJREMethodLimitation(final HttpURLConnection httpURLConnection, final

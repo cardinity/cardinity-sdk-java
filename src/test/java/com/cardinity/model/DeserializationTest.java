@@ -33,7 +33,7 @@ public class DeserializationTest extends CardinityBaseTest {
         assertNotNull(payment.getPaymentInstrument());
         assertEquals(Payment.Method.CARD, payment.getPaymentInstrument().getType());
 
-        Card card = (Card)payment.getPaymentInstrument();
+        Card card = (Card) payment.getPaymentInstrument();
         assertEquals("1111", card.getPan());
         assertEquals("Mike Dough", card.getHolder());
         assertEquals("Visa", card.getCardBrand());
@@ -61,7 +61,7 @@ public class DeserializationTest extends CardinityBaseTest {
         assertNotNull(payment.getPaymentInstrument());
         assertEquals(Payment.Method.CARD, payment.getPaymentInstrument().getType());
 
-        Card card = (Card)payment.getPaymentInstrument();
+        Card card = (Card) payment.getPaymentInstrument();
         assertEquals("0067", card.getPan());
         assertEquals("Mike Dough", card.getHolder());
         assertEquals("Visa", card.getCardBrand());
@@ -88,7 +88,7 @@ public class DeserializationTest extends CardinityBaseTest {
         assertNotNull(payment.getPaymentInstrument());
         assertEquals(Payment.Method.CARD, payment.getPaymentInstrument().getType());
 
-        Card card = (Card)payment.getPaymentInstrument();
+        Card card = (Card) payment.getPaymentInstrument();
         assertEquals("4447", card.getPan());
         assertEquals("John Smith", card.getHolder());
         assertEquals("Visa", card.getCardBrand());

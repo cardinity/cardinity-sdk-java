@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 
 public final class MoneyUtil {
 
-    private MoneyUtil() {}
+    private MoneyUtil() {
+    }
 
     public static BigDecimal formatAmount(BigDecimal amount) {
 

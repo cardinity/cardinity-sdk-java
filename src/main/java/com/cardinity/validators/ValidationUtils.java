@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 
 public final class ValidationUtils {
 
-    private ValidationUtils() {}
+    private ValidationUtils() {
+    }
 
     public static boolean validateExactLength(String text, int length) {
         return text != null && text.length() == length;

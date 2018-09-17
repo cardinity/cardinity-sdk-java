@@ -147,7 +147,9 @@ public class Payment {
         this.country = country;
     }
 
-    public void setOrderId(String orderId) { this.orderId = orderId; }
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
     public String getOrderId() {
         return orderId;

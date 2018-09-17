@@ -1,6 +1,5 @@
 package com.cardinity.validators;
 
-import com.cardinity.model.MoneyUtil;
 import org.junit.Test;
 
 import java.lang.reflect.Constructor;

@@ -15,7 +15,6 @@
  */
 package com.cardinity.json;
 
-
 import com.google.gson.JsonParseException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -281,4 +280,3 @@ public final class UtcDateTypeAdapter extends TypeAdapter<Date> {
         return -result;
     }
 }
-

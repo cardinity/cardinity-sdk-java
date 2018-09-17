@@ -25,5 +25,4 @@ public class SettlementValidator implements Validator<Settlement> {
             throw new ValidationException("Description maximum length 255 characters.");
     }
 
-
 }

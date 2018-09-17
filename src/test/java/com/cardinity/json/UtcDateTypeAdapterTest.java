@@ -79,7 +79,7 @@ public class UtcDateTypeAdapterTest extends CardinityBaseTest {
     @Test(expected = JsonParseException.class)
     public void testDeserializeNumberFormatException() throws Exception {
 
-       gson.fromJson("\"2014-12-19T111:52:53Z\"", Date.class);
+        gson.fromJson("\"2014-12-19T111:52:53Z\"", Date.class);
     }
 
     @Test(expected = JsonParseException.class)

@@ -14,11 +14,11 @@ public class PaymentDeserializer implements JsonDeserializer<Payment> {
     private static final String PAYMENT_METHOD_PROP = "payment_method";
     private static final String PAYMENT_INSTRUMENT_PROP = "payment_instrument";
     // @formatter:off
-        private static final Gson GSON = new GsonBuilder()
-                .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .registerTypeAdapter(Date.class, new UtcDateTypeAdapter())
-                .create();
-        // @formatter:on
+    private static final Gson GSON = new GsonBuilder()
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .registerTypeAdapter(Date.class, new UtcDateTypeAdapter())
+            .create();
+    // @formatter:on
 
     @Override
     public Payment deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws

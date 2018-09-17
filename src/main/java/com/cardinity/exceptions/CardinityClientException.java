@@ -1,6 +1,6 @@
 package com.cardinity.exceptions;
 
-public class CardinityClientException extends  CardinityException {
+public class CardinityClientException extends CardinityException {
 
     private static final long serialVersionUID = 5273072716090618133L;
 

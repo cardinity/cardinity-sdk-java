@@ -13,7 +13,7 @@ public class Result<T> {
         this.cardinityError = cardinityError;
     }
 
-    public T getItem(){
+    public T getItem() {
         return item;
     }
 

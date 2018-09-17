@@ -30,7 +30,7 @@ public class PaymentValidator implements Validator<Payment> {
         if (payment.getPaymentMethod() == null)
             throw new ValidationException("Payment method is mandatory.");
 
-        if (payment.getPaymentInstrument()== null)
+        if (payment.getPaymentInstrument() == null)
             throw new ValidationException("Payment instrument is mandatory.");
 
         if (payment.getPaymentInstrument().getType() != payment.getPaymentMethod())

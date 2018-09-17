@@ -1,6 +1,5 @@
 package com.cardinity;
 
-import com.cardinity.exceptions.CardinityClientException;
 import com.cardinity.exceptions.ValidationException;
 import com.cardinity.model.Card;
 import com.cardinity.model.Payment;
@@ -39,7 +38,7 @@ public class CardinityClientTest {
     }
 
     /**
-     *  Payment validation tests
+     * Payment validation tests
      */
     @Test(expected = ValidationException.class)
     public void testCreatePaymentValidationException1() {
@@ -82,7 +81,7 @@ public class CardinityClientTest {
     }
 
     /**
-     *  Settlement validation tests
+     * Settlement validation tests
      */
     @Test(expected = ValidationException.class)
     public void testCreateSettlementValidationException1() {
@@ -137,7 +136,7 @@ public class CardinityClientTest {
     }
 
     /**
-     *  Void validation tests
+     * Void validation tests
      */
     @Test(expected = ValidationException.class)
     public void testCreateVoidValidationException1() {
@@ -180,7 +179,7 @@ public class CardinityClientTest {
     }
 
     /**
-     *  Refund validation tests
+     * Refund validation tests
      */
     @Test(expected = ValidationException.class)
     public void testCreateRefundValidationException1() {
@@ -234,7 +233,7 @@ public class CardinityClientTest {
     }
 
     /**
-     *  CardinityClient constructor validations test
+     * CardinityClient constructor validations test
      */
     @Test(expected = ValidationException.class)
     public void testCreateClientException1() {

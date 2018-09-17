@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 public class EnumTest {
 
     @Test
-    public void testPaymentEnums() throws Exception{
+    public void testPaymentEnums() throws Exception {
 
         assertEquals("approved", Payment.Status.APPROVED.getValue());
         assertEquals("declined", Payment.Status.DECLINED.getValue());

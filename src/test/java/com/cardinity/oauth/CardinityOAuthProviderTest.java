@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 public class CardinityOAuthProviderTest {
 
     private OAuthProvider oAuthProvider;
+
     @Before
     public void setUp() throws Exception {
         oAuthProvider = new CardinityOAuthProvider("test_key", "test_secret");

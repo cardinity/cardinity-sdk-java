@@ -47,7 +47,7 @@ public class CardinityClient {
     /**
      * Constructs a CardinityClient object.
      *
-     * @param consumerKey live or testing consumer key provided by cardinity
+     * @param consumerKey    live or testing consumer key provided by cardinity
      * @param consumerSecret live or testing consumer secret provided by cardinity
      */
     public CardinityClient(String consumerKey, String consumerSecret) {
@@ -62,7 +62,7 @@ public class CardinityClient {
      * @param payment Payment object.
      * @return a Result wrapper containing either a result Payment object or a CardinityError object.
      * @throws ValidationException if payment object contains validation errors.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<Payment> createPayment(Payment payment) {
 
@@ -73,11 +73,11 @@ public class CardinityClient {
     /**
      * Finalizes a pending payment.
      *
-     * @param paymentId id of a payment to be finalized.
+     * @param paymentId     id of a payment to be finalized.
      * @param authorizeData PaRes data received from ACS server.
      * @return a Result wrapper containing either a result Payment object or a CardinityError object.
      * @throws ValidationException if paymentId is null or authorizeDate is empty.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<Payment> finalizePayment(UUID paymentId, String authorizeData) {
 
@@ -97,7 +97,7 @@ public class CardinityClient {
      * @param paymentId id of a payment to be found.
      * @return a Result wrapper containing either a found Payment object or a CardinityError object.
      * @throws ValidationException if paymentId is null.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<Payment> getPayment(UUID paymentId) {
 
@@ -122,7 +122,7 @@ public class CardinityClient {
      * @param limit number of last payment to be returned. Value must be between 1 and 100.
      * @return a Result wrapper containing either a list of Payment objects or a CardinityError object.
      * @throws ValidationException if limit is less than 1 or larger than 100.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<List<Payment>> getPayments(int limit) {
 
@@ -138,10 +138,10 @@ public class CardinityClient {
      * Refunds an approved payment.
      *
      * @param paymentId id of a payment to be refunded.
-     * @param refund Refund object containing amount to be refunded.
+     * @param refund    Refund object containing amount to be refunded.
      * @return a Result wrapper containing either a result Refund object or a CardinityError object.
      * @throws ValidationException if refund object contains validation errors or paymentId is null.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<Refund> createRefund(UUID paymentId, Refund refund) {
 
@@ -158,10 +158,10 @@ public class CardinityClient {
      * Finds and returns a refund specified by a paymentId and a refundId.
      *
      * @param paymentId id of payment which was refunded.
-     * @param refundId id of a refund to be found.
+     * @param refundId  id of a refund to be found.
      * @return a Result wrapper containing either a found Refund object or a CardinityError object.
      * @throws ValidationException if paymentId or refundId are null.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<Refund> getRefund(UUID paymentId, UUID refundId) {
 
@@ -179,7 +179,7 @@ public class CardinityClient {
      * @param paymentId id of a payment refunds of which will be returned.
      * @return a Result wrapper containing a list of Refund objects or a CardinityError object.
      * @throws ValidationException if paymentId is null.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<List<Refund>> getRefunds(UUID paymentId) {
 
@@ -192,11 +192,11 @@ public class CardinityClient {
     /**
      * Settles an authorized payment.
      *
-     * @param paymentId id of a payment to be settled.
+     * @param paymentId  id of a payment to be settled.
      * @param settlement Settlement object containing amount to be settled.
      * @return a Result wrapper containing either a result Settlement object or a CardinityError object.
      * @throws ValidationException if settlement object contains validation errors or paymentId is null.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<Settlement> createSettlement(UUID paymentId, Settlement settlement) {
 
@@ -210,11 +210,12 @@ public class CardinityClient {
 
     /**
      * Finds and returns a settlement specified by a paymentId and a settlementId.
-     * @param paymentId id of a payment which was settled.
+     *
+     * @param paymentId    id of a payment which was settled.
      * @param settlementId id of settlement to be found.
      * @return a Result wrapper containing either a found Settlement object or a CardinityError object.
      * @throws ValidationException if paymentId or settlementId are null.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<Settlement> getSettlement(UUID paymentId, UUID settlementId) {
 
@@ -232,7 +233,7 @@ public class CardinityClient {
      * @param paymentId id of a payment settlements of which will be returned.
      * @return a Result wrapper containing a list of Settlement objects or a CardinityError object.
      * @throws ValidationException if paymentId is null.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<List<Settlement>> getSettlements(UUID paymentId) {
 
@@ -246,10 +247,10 @@ public class CardinityClient {
      * Voids an authorized payment.
      *
      * @param paymentId id of a payment to be voided.
-     * @param voidP Void object.
+     * @param voidP     Void object.
      * @return a Result wrapper containing either a result Void object or a CardinityError object.
      * @throws ValidationException if void object contains validation errors or paymentId is null.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<Void> createVoid(UUID paymentId, Void voidP) {
 
@@ -263,11 +264,12 @@ public class CardinityClient {
 
     /**
      * Finds and returns a void specified by a paymentId and a voidId.
+     *
      * @param paymentId id of a payment which was voided.
-     * @param voidId id of a void to be found.
+     * @param voidId    id of a void to be found.
      * @return a Result wrapper containing either a found Void object or a CardinityError object.
      * @throws ValidationException if paymentId or voidId are null.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<Void> getVoid(UUID paymentId, UUID voidId) {
 
@@ -286,7 +288,7 @@ public class CardinityClient {
      * @param paymentId id of a payment voids of which will be returned.
      * @return a Result wrapper containing a list of Void objects or a CardinityError object.
      * @throws ValidationException if paymentId is null.
-     * @throws CardinityException if internal client error occurs.
+     * @throws CardinityException  if internal client error occurs.
      */
     public Result<List<Void>> getVoids(UUID paymentId) {
 

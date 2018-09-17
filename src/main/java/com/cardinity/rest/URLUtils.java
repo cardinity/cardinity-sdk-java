@@ -62,7 +62,6 @@ public final class URLUtils {
 
     public static String buildQueryParam(String key, String value) throws UnsupportedEncodingException {
         return String.format("%s=%s", URLEncoder.encode(key, Cardinity.ENCODING_CHARSET), URLEncoder.encode(value,
-                Cardinity
-                .ENCODING_CHARSET)) ;
+                Cardinity.ENCODING_CHARSET));
     }
 }

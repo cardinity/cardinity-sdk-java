@@ -11,7 +11,7 @@
     "error": "33333: 3D Secure Authorization Failed.",
     "country": "LT",
     "payment_method": "card",
-    "payment_instrument":{
+    "payment_instrument": {
       "card_brand": "Visa",
       "pan": "0006",
       "exp_year": 2017,
@@ -30,7 +30,7 @@
     "status": "approved",
     "country": "LT",
     "payment_method": "card",
-    "payment_instrument":{
+    "payment_instrument": {
       "card_brand": "Visa",
       "pan": "4447",
       "exp_year": 2017,
