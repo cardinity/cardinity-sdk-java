@@ -28,7 +28,7 @@ public abstract class RestResource {
     }
 
     public enum Resource {
-        PAYMENTS, REFUNDS, SETTLEMENTS, VOIDS
+        PAYMENTS, REFUNDS, SETTLEMENTS, VOIDS, CHARGEBACKS
     }
 
 }

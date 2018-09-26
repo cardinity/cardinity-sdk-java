@@ -38,11 +38,16 @@ public class CardinityClient {
     };
     private final static TypeToken<List<Void>> VOID_LIST_TYPE = new TypeToken<List<Void>>() {
     };
+    private final static TypeToken<Chargeback> CHARGEBACK_TYPE = new TypeToken<Chargeback>() {
+    };
+    private final static TypeToken<List<Chargeback>> CHARGEBACK_LIST_TYPE = new TypeToken<List<Chargeback>>() {
+    };
 
     private final static Validator<Payment> paymentValidator = new PaymentValidator();
     private final static Validator<Refund> refundValidator = new RefundValidator();
     private final static Validator<Settlement> settlementValidator = new SettlementValidator();
     private final static Validator<Void> voidValidator = new VoidValidator();
+    private final static Validator<Chargeback> chargebackValidator = new ChargebackValidator();
 
     /**
      * Constructs a CardinityClient object.
@@ -296,6 +301,60 @@ public class CardinityClient {
 
         return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(paymentId, RestResource.Resource.VOIDS),
                 VOID_LIST_TYPE);
+    }
+
+    /**
+     * Creates a new chargeback.
+     *
+     * @param paymentId  id of a payment to be chargebacked.
+     * @param chargeback Chargeback object.
+     * @return a Result wrapper containing either a result Chargeback object or a CardinityError object.
+     * @throws ValidationException if chargeback object contains validation errors or paymentId is null.
+     * @throws CardinityException  if internal client error occurs.
+     */
+    public Result<Chargeback> createChargeback(UUID paymentId, Chargeback chargeback) {
+
+        if (paymentId == null) throw new ValidationException("paymentId must be not null.");
+
+        chargebackValidator.validate(chargeback);
+
+        return restClient.sendRequest(RequestMethod.POST, URLUtils.buildUrl(paymentId, RestResource.Resource.CHARGEBACKS)
+                , CHARGEBACK_TYPE, chargeback);
+    }
+
+    /**
+     * Finds and returns a chargeback specified by a paymentId and a chargebackId.
+     *
+     * @param paymentId    id of payment which was chargebacked.
+     * @param chargebackId id of a chargeback to be found.
+     * @return a Result wrapper containing either a found Chargeback object or a CardinityError object.
+     * @throws ValidationException if paymentId or chargebackId are null.
+     * @throws CardinityException  if internal client error occurs.
+     */
+    public Result<Chargeback> getChargeback(UUID paymentId, UUID chargebackId) {
+
+        if (paymentId == null) throw new ValidationException("paymentId must be not null.");
+
+        if (chargebackId == null) throw new ValidationException("chargebackId must be not null.");
+
+        return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(paymentId, RestResource.Resource.CHARGEBACKS,
+                chargebackId), CHARGEBACK_TYPE);
+    }
+
+    /**
+     * Returns a list of chargebacks for a specified payment.
+     *
+     * @param paymentId id of a payment chargebacks of which will be returned.
+     * @return a Result wrapper containing a list of Chargeback objects or a CardinityError object.
+     * @throws ValidationException if paymentId is null.
+     * @throws CardinityException  if internal client error occurs.
+     */
+    public Result<List<Chargeback>> getChargebacks(UUID paymentId) {
+
+        if (paymentId == null) throw new ValidationException("paymentID must be not null.");
+
+        return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(paymentId, RestResource.Resource.CHARGEBACKS),
+                CHARGEBACK_LIST_TYPE);
     }
 
 }

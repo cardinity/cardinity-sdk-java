@@ -19,7 +19,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>com.cardinity</groupId>
   <artifactId>cardinity-sdk-java</artifactId>
-  <version>1.0.1</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 
@@ -28,7 +28,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "com.cardinity:cardinity-sdk-java:1.0.1"
+compile "com.cardinity:cardinity-sdk-java:1.1.0"
 ```
 
 ### Other
@@ -59,7 +59,7 @@ payment.setPaymentMethod(Payment.Method.CARD);
 Card card = new Card();
 card.setPan("4111111111111111");
 card.setCvc(123);
-card.setExpYear(2016);
+card.setExpYear(2021);
 card.setExpMonth(1);
 card.setHolder("John Doe");
 payment.setPaymentInstrument(card);
@@ -323,6 +323,34 @@ Result<List<Void>> result = client.getVoids(paymentId);
 
 if (result.isValid()) {
     List<Void> voids = result.getItem();
+}
+else {
+    CardinityError error = result.getCardinityError();
+}
+```
+
+### Chargebacks [API](https://developers.cardinity.com/api/v1/#chargebacks)
+
+#### Get existing chargeback
+
+```java
+Result<Chargeback> result = client.getChargeback(paymentId, chargebackId);
+
+if (result.isValid()) {
+    Chargeback chargeback = result.getItem();
+}
+else {
+    CardinityError error = result.getCardinityError();
+}
+```
+
+#### Get all chargebacks
+
+```java
+Result<List<Chargeback>> result = client.getChargebacks(paymentId);
+
+if (result.isValid()) {
+    List<Chargeback> chargebacks = result.getItem();
 }
 else {
     CardinityError error = result.getCardinityError();
