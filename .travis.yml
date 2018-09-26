@@ -1,7 +1,6 @@
 language: java
 
 jdk:
-  - openjdk6
   - openjdk7
   - openjdk8
   - oraclejdk8
@@ -15,6 +14,3 @@ before_install:
     fi
 
 install: mvn install -Dgpg.skip=true -DskipTests
-
-script:
-  - if [[ $JAVA_HOME = *java-6* ]]; then jdk_switcher use openjdk6; fi
