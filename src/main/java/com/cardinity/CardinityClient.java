@@ -2,8 +2,8 @@ package com.cardinity;
 
 import com.cardinity.exceptions.CardinityException;
 import com.cardinity.exceptions.ValidationException;
-import com.cardinity.model.*;
 import com.cardinity.model.Void;
+import com.cardinity.model.*;
 import com.cardinity.oauth.CardinityOAuthProvider;
 import com.cardinity.rest.CardinityRestClient;
 import com.cardinity.rest.RestClient;
@@ -13,14 +13,10 @@ import com.cardinity.rest.URLUtils;
 import com.cardinity.validators.*;
 import com.google.gson.reflect.TypeToken;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class CardinityClient {
-
-    private final RestClient restClient;
+    private static final String MESSAGE_PAYMENT_ID_MISSING = "paymentID must be not null.";
 
     private final static TypeToken<Payment> PAYMENT_TYPE = new TypeToken<Payment>() {
     };
@@ -49,6 +45,8 @@ public class CardinityClient {
     private final static Validator<Void> voidValidator = new VoidValidator();
     private final static Validator<Chargeback> chargebackValidator = new ChargebackValidator();
 
+    private final RestClient restClient;
+
     /**
      * Constructs a CardinityClient object.
      *
@@ -59,6 +57,13 @@ public class CardinityClient {
         if (ValidationUtils.isBlank(consumerKey) || ValidationUtils.isBlank(consumerSecret))
             throw new ValidationException("Consumer key and consumer secret must be not null");
         this.restClient = new CardinityRestClient(new CardinityOAuthProvider(consumerKey, consumerSecret));
+    }
+
+    //Visible for testing
+    CardinityClient(RestClient restClient) {
+        if (restClient == null)
+            throw new ValidationException("Rest client must be not null");
+        this.restClient = restClient;
     }
 
     /**
@@ -76,7 +81,7 @@ public class CardinityClient {
     }
 
     /**
-     * Finalizes a pending payment.
+     * Finalizes a pending payment using 3D Secure V1 flow.
      *
      * @param paymentId     id of a payment to be finalized.
      * @param authorizeData PaRes data received from ACS server.
@@ -85,15 +90,28 @@ public class CardinityClient {
      * @throws CardinityException  if internal client error occurs.
      */
     public Result<Payment> finalizePayment(UUID paymentId, String authorizeData) {
-
-        if (paymentId == null) throw new ValidationException("paymentID must be not null.");
-
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
         if (ValidationUtils.isBlank(authorizeData)) throw new ValidationException("authorizeData is mandatory.");
 
-        Payment finalizePayment = new Payment();
-        finalizePayment.setAuthorizeData(authorizeData);
+        return restClient.sendRequest(RequestMethod.PATCH, URLUtils.buildUrl(paymentId), PAYMENT_TYPE,
+                Collections.singletonMap("authorize_data", authorizeData));
+    }
 
-        return restClient.sendRequest(RequestMethod.PATCH, URLUtils.buildUrl(paymentId), PAYMENT_TYPE, finalizePayment);
+    /**
+     * Finalizes a pending payment using 3D Secure V2 flow.
+     *
+     * @param paymentId id of a payment to be finalized.
+     * @param cRes      cRes parameter received from ACS server.
+     * @return a Result wrapper containing either a result Payment object or a CardinityError object.
+     * @throws ValidationException if data for payment finalization is missing.
+     * @throws CardinityException  if internal client error occurs.
+     */
+    public Result<Payment> finalizePaymentV2(UUID paymentId, String cRes) {
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
+        if (ValidationUtils.isBlank(cRes)) throw new ValidationException("cRes is mandatory.");
+
+        return restClient.sendRequest(RequestMethod.PATCH, URLUtils.buildUrl(paymentId), PAYMENT_TYPE,
+                Collections.singletonMap("cres", cRes));
     }
 
     /**
@@ -106,7 +124,7 @@ public class CardinityClient {
      */
     public Result<Payment> getPayment(UUID paymentId) {
 
-        if (paymentId == null) throw new ValidationException("paymentID must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(paymentId), PAYMENT_TYPE);
     }
@@ -150,7 +168,7 @@ public class CardinityClient {
      */
     public Result<Refund> createRefund(UUID paymentId, Refund refund) {
 
-        if (paymentId == null) throw new ValidationException("paymentId must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         refundValidator.validate(refund);
 
@@ -170,7 +188,7 @@ public class CardinityClient {
      */
     public Result<Refund> getRefund(UUID paymentId, UUID refundId) {
 
-        if (paymentId == null) throw new ValidationException("paymentId must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         if (refundId == null) throw new ValidationException("refundId must be not null.");
 
@@ -188,7 +206,7 @@ public class CardinityClient {
      */
     public Result<List<Refund>> getRefunds(UUID paymentId) {
 
-        if (paymentId == null) throw new ValidationException("paymentID must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(paymentId, RestResource.Resource.REFUNDS),
                 REFUND_LIST_TYPE);
@@ -205,7 +223,7 @@ public class CardinityClient {
      */
     public Result<Settlement> createSettlement(UUID paymentId, Settlement settlement) {
 
-        if (paymentId == null) throw new ValidationException("paymentID must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         settlementValidator.validate(settlement);
 
@@ -224,7 +242,7 @@ public class CardinityClient {
      */
     public Result<Settlement> getSettlement(UUID paymentId, UUID settlementId) {
 
-        if (paymentId == null) throw new ValidationException("paymentID must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         if (settlementId == null) throw new ValidationException("settlementId must be not null.");
 
@@ -242,7 +260,7 @@ public class CardinityClient {
      */
     public Result<List<Settlement>> getSettlements(UUID paymentId) {
 
-        if (paymentId == null) throw new ValidationException("paymentId must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(paymentId, RestResource.Resource
                 .SETTLEMENTS), SETTLEMENT_LIST_TYPE);
@@ -259,7 +277,7 @@ public class CardinityClient {
      */
     public Result<Void> createVoid(UUID paymentId, Void voidP) {
 
-        if (paymentId == null) throw new ValidationException("paymentID must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         voidValidator.validate(voidP);
 
@@ -278,7 +296,7 @@ public class CardinityClient {
      */
     public Result<Void> getVoid(UUID paymentId, UUID voidId) {
 
-        if (paymentId == null) throw new ValidationException("paymentID must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         if (voidId == null) throw new ValidationException("voidId must be not null.");
 
@@ -297,7 +315,7 @@ public class CardinityClient {
      */
     public Result<List<Void>> getVoids(UUID paymentId) {
 
-        if (paymentId == null) throw new ValidationException("paymentID must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(paymentId, RestResource.Resource.VOIDS),
                 VOID_LIST_TYPE);
@@ -314,7 +332,7 @@ public class CardinityClient {
      */
     public Result<Chargeback> createChargeback(UUID paymentId, Chargeback chargeback) {
 
-        if (paymentId == null) throw new ValidationException("paymentId must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         chargebackValidator.validate(chargeback);
 
@@ -333,7 +351,7 @@ public class CardinityClient {
      */
     public Result<Chargeback> getChargeback(UUID paymentId, UUID chargebackId) {
 
-        if (paymentId == null) throw new ValidationException("paymentId must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         if (chargebackId == null) throw new ValidationException("chargebackId must be not null.");
 
@@ -351,7 +369,7 @@ public class CardinityClient {
      */
     public Result<List<Chargeback>> getChargebacks(UUID paymentId) {
 
-        if (paymentId == null) throw new ValidationException("paymentID must be not null.");
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
 
         return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(paymentId, RestResource.Resource.CHARGEBACKS),
                 CHARGEBACK_LIST_TYPE);

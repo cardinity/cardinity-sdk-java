@@ -31,7 +31,7 @@ public class CardinityRestClient implements RestClient {
     }
 
     @Override
-    public <T> Result<T> sendRequest(RequestMethod method, String url, TypeToken<T> clazz, T requestObject) {
+    public <T> Result<T> sendRequest(RequestMethod method, String url, TypeToken<T> clazz, Object requestObject) {
         return _sendRequest(method, url, clazz, requestObject, null);
     }
 
@@ -42,10 +42,11 @@ public class CardinityRestClient implements RestClient {
 
     @Override
     public <T> Result<T> sendRequest(RequestMethod method, String url, TypeToken<T> clazz, Map<String, String> params) {
-        return _sendRequest(method, url, clazz, null, params);
+        boolean methodGet = method == RequestMethod.GET;
+        return _sendRequest(method, url, clazz, methodGet ? null : params, methodGet ? params : null);
     }
 
-    private <T> Result<T> _sendRequest(RequestMethod method, String url, TypeToken<T> clazz, T requestObject,
+    private <T> Result<T> _sendRequest(RequestMethod method, String url, TypeToken<T> clazz, Object requestObject,
             Map<String, String> params) {
 
         Response response = getResponse(method, url, requestObject, params);
@@ -65,7 +66,7 @@ public class CardinityRestClient implements RestClient {
         return result;
     }
 
-    private <T> Response getResponse(RequestMethod method, String url, T requestObject, Map<String, String> params) {
+    private Response getResponse(RequestMethod method, String url, Object requestObject, Map<String, String> params) {
         HttpURLConnection conn = null;
 
         try {
@@ -179,7 +180,7 @@ public class CardinityRestClient implements RestClient {
         return headers;
     }
 
-    private static <T> String buildRequestBody(T object) {
+    private static String buildRequestBody(Object object) {
         if (object != null) {
             return RestResource.GSON.toJson(object);
         }

@@ -15,6 +15,10 @@ public class Payment {
     private Type type;
     private Boolean live;
     private String description;
+    /**
+     * @deprecated Unused and should be removed
+     */
+    @Deprecated
     private String authorizeData;
     private Boolean settle;
     private Status status;
@@ -24,6 +28,8 @@ public class Payment {
     private Method paymentMethod;
     private PaymentInstrument paymentInstrument;
     private AuthorizationInformation authorizationInformation;
+    private Threeds2Data threeds2Data;
+    private Threeds2AuthorizationInformation threeds2AuthorizationInformation;
 
     public enum Status {
 
@@ -123,6 +129,11 @@ public class Payment {
         this.description = description;
     }
 
+    /**
+     * @deprecated method is deprecated and shouldn't be used.
+     * @param authorizeData
+     */
+    @Deprecated
     public void setAuthorizeData(String authorizeData) {
         this.authorizeData = authorizeData;
     }
@@ -171,6 +182,11 @@ public class Payment {
         this.paymentInstrument = paymentInstrument;
     }
 
+    /**
+     * @deprecated method is deprecated and shouldn't be used.
+     * @return
+     */
+    @Deprecated
     public String getAuthorizeData() {
         return authorizeData;
     }
@@ -179,4 +195,27 @@ public class Payment {
         return authorizationInformation;
     }
 
+    public Threeds2Data getThreeds2Data() {
+        return threeds2Data;
+    }
+
+    public void setThreeds2Data(Threeds2Data threeds2Data) {
+        this.threeds2Data = threeds2Data;
+    }
+
+    public Threeds2AuthorizationInformation getThreeds2AuthorizationInformation() {
+        return threeds2AuthorizationInformation;
+    }
+
+    public void setThreeds2AuthorizationInformation(Threeds2AuthorizationInformation threeds2AuthorizationInformation) {
+        this.threeds2AuthorizationInformation = threeds2AuthorizationInformation;
+    }
+
+    public boolean isThreedsV1() {
+        return authorizationInformation != null;
+    }
+
+    public boolean isThreedsV2() {
+        return threeds2AuthorizationInformation != null;
+    }
 }

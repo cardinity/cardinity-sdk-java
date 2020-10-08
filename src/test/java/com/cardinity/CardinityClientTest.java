@@ -1,24 +1,32 @@
 package com.cardinity;
 
 import com.cardinity.exceptions.ValidationException;
-import com.cardinity.model.Card;
-import com.cardinity.model.Payment;
-import com.cardinity.model.Refund;
 import com.cardinity.model.Void;
-import com.cardinity.model.Settlement;
+import com.cardinity.model.*;
+import com.cardinity.rest.CardinityRestClient;
+import com.google.gson.reflect.TypeToken;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 
 import java.math.BigDecimal;
+import java.util.Map;
 import java.util.UUID;
+
+import static com.cardinity.rest.RestResource.RequestMethod.PATCH;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 public class CardinityClientTest {
 
-    static CardinityClient client;
+    private static CardinityClient client;
+    private static CardinityRestClient restClient;
 
     @BeforeClass
     public static void setUpClass() {
-        client = new CardinityClient("consumerKey", "consumerSecret");
+        restClient = mock(CardinityRestClient.class);
+        client = new CardinityClient(restClient);
     }
 
     private static Payment createBaseCCPayment() {
@@ -63,6 +71,42 @@ public class CardinityClientTest {
     @Test(expected = ValidationException.class)
     public void testFinalizePaymentValidationException3() {
         client.finalizePayment(null, null);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testFinalizePaymentV2MissingPaymentId() {
+        client.finalizePaymentV2(null, "cres");
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testFinalizePaymentV2MissingChallengeResponse() {
+        client.finalizePaymentV2(UUID.randomUUID(), null);
+    }
+
+    @Test
+    public void testFinalizePayment() {
+        UUID paymentId = UUID.randomUUID();
+        String challengeResponse = "authorize_data-jn2i332nji3";
+        client.finalizePayment(paymentId, challengeResponse);
+        ArgumentCaptor<Map<String, String>> paymentCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(restClient).sendRequest(eq(PATCH), endsWith(paymentId.toString()),
+                ArgumentMatchers.<TypeToken<Payment>>any(), paymentCaptor.capture());
+        Map<String, String> params = paymentCaptor.getValue();
+        assertEquals(1, params.size());
+        assertEquals(challengeResponse, params.get("authorize_data"));
+    }
+
+    @Test
+    public void testFinalizePaymentV2() {
+        UUID paymentId = UUID.randomUUID();
+        String challengeResponse = "cres-jn2i332nji3";
+        client.finalizePaymentV2(paymentId, challengeResponse);
+        ArgumentCaptor<Map<String, String>> paymentCaptor = ArgumentCaptor.forClass(Map.class);
+        verify(restClient).sendRequest(eq(PATCH), endsWith(paymentId.toString()),
+                ArgumentMatchers.<TypeToken<Payment>>any(), paymentCaptor.capture());
+        Map<String, String> params = paymentCaptor.getValue();
+        assertEquals(1, params.size());
+        assertEquals(challengeResponse, params.get("cres"));
     }
 
     @Test(expected = ValidationException.class)

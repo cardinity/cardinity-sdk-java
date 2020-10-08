@@ -19,7 +19,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>com.cardinity</groupId>
   <artifactId>cardinity-sdk-java</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0</version>
 </dependency>
 ```
 
@@ -28,7 +28,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "com.cardinity:cardinity-sdk-java:1.1.0"
+compile "com.cardinity:cardinity-sdk-java:1.2.0"
 ```
 
 ### Other
@@ -64,6 +64,10 @@ card.setExpMonth(1);
 card.setHolder("John Doe");
 payment.setPaymentInstrument(card);
 
+Threeds2Data threeds2Data = new Threeds2Data();
+// Set threeds2Data fields to enable 3D Secure V2 flow
+payment.setThreeds2Data(threeds2Data);
+
 Result<Payment> result = client.createPayment(payment);
 ```
 
@@ -81,8 +85,17 @@ if (result.isValid() && result.getItem().getStatus() == Payment.Status.APPROVED)
 /** Request was valid but payment requires additional authentication. */
 else if (result.isValid() && result.getItem().getStatus() == Payment.Status.PENDING) {
     UUID paymentId = result.getItem().getId();
-    String acsURL = result.getItem().getAuthorizationInformation().getUrl();
-    String paReq = result.getItem().getAuthorizationInformation().getData();
+    String acsURL;
+    String challengeRequest;
+    if (result.getItem().isThreedsV2()) {
+        // 3D Secure V2 flow
+        acsURL = result.getItem().getThreeds2AuthorizationInformation().getAcsUrl();
+        challengeRequest = result.getItem().getThreeds2AuthorizationInformation().getCReq();
+    } else {
+        // 3D Secure V1 flow
+        acsURL = result.getItem().getAuthorizationInformation().getUrl();
+        challengeRequest = result.getItem().getAuthorizationInformation().getData();
+    }
     // redirect customer to ACS server for 3D Secure authentication
 }
 
@@ -107,14 +120,34 @@ else {
 ```java
 /**
  * paymentId - ID of a pending payment
- * paRes - data received from ACS 
+ * challengeResponse - data received from ACS. cRes in case of 3D Secure V2 flow, paRes in case of 3D Secure V1 flow
  */
-Result<Payment> result = client.finalizePayment(paymentId, paRes);
+Result<Payment> result;
+if (v2Flow) {
+    result = client.finalizePaymentV2(paymentId, challengeResponse);
+}
+if (v1Flow) {
+    result = client.finalizePayment(paymentId, challengeResponse);
+}
 
-/** Request was valid and payment was approved. */
-if (result.isValid() && result.getItem().getStatus() == Payment.Status.APPROVED) {
-    UUID paymentId = result.getItem().getId();
-    // proceed with successful payment flow
+if (result.isValid()) {
+    /** Request was valid and payment was approved. */
+    if (result.getItem().getStatus() == Payment.Status.APPROVED) {
+        UUID paymentId = result.getItem().getId();
+        // proceed with successful payment flow
+    }    
+    /** If finalizePaymentV2() was called and a technical error occured during payment finalization,
+      * Cardinity will try to perform 3D Secure V1 authorization. You can either retry 3D Secure V2 flow,
+      * or perform 3D Secure V1 flow
+      */
+    else if (result.getItem().getStatus() == Payment.Status.PENDING) {
+        if (result.getItem().isThreedsV1()) {
+            // Perform 3D Secure V1 flow
+        }
+        if (result.getItem().isThreedsV2()) {
+            // Retry payment finalization with 3D Secure V2 flow
+        }
+    }
 }
 
 /** Request was valid but payment was declined. */
