@@ -64,8 +64,9 @@ card.setExpMonth(1);
 card.setHolder("John Doe");
 payment.setPaymentInstrument(card);
 
+// Set threeds2Data to enable 3D Secure V2 flow
 Threeds2Data threeds2Data = new Threeds2Data();
-// Set threeds2Data fields to enable 3D Secure V2 flow
+// Populate threeds2Data object with available data
 payment.setThreeds2Data(threeds2Data);
 
 Result<Payment> result = client.createPayment(payment);
@@ -121,12 +122,12 @@ else {
 /**
  * paymentId - ID of a pending payment
  * challengeResponse - data received from ACS. cRes in case of 3D Secure V2 flow, paRes in case of 3D Secure V1 flow
+ * v2Flow - indicator whether to use 3D Secure V2 flow
  */
 Result<Payment> result;
 if (v2Flow) {
     result = client.finalizePaymentV2(paymentId, challengeResponse);
-}
-if (v1Flow) {
+} else {
     result = client.finalizePayment(paymentId, challengeResponse);
 }
 
