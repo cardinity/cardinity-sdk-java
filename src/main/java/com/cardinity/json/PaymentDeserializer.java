@@ -4,6 +4,7 @@ import com.cardinity.exceptions.CardinityClientException;
 import com.cardinity.model.Card;
 import com.cardinity.model.Payment;
 import com.cardinity.model.PaymentInstrument;
+import com.cardinity.model.Threeds2AuthorizationInformation;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
@@ -13,6 +14,7 @@ public class PaymentDeserializer implements JsonDeserializer<Payment> {
 
     private static final String PAYMENT_METHOD_PROP = "payment_method";
     private static final String PAYMENT_INSTRUMENT_PROP = "payment_instrument";
+    private static final String THREEDS2_DATA_PROP = "threeds2_data";
     // @formatter:off
     private static final Gson GSON = new GsonBuilder()
             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
@@ -39,6 +41,10 @@ public class PaymentDeserializer implements JsonDeserializer<Payment> {
         Payment payment = GSON.fromJson(paymentObject, Payment.class);
 
         payment.setPaymentInstrument(instrument);
+        payment.setThreeds2Data(null);//Used only to send data
+        Threeds2AuthorizationInformation threeds2AuthorizationInformation =
+                context.deserialize(paymentObject.get(THREEDS2_DATA_PROP), Threeds2AuthorizationInformation.class);
+        payment.setThreeds2AuthorizationInformation(threeds2AuthorizationInformation);
 
         return payment;
     }

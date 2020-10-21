@@ -1,15 +1,16 @@
 package com.cardinity;
 
-import com.cardinity.exceptions.ValidationException;
-import com.cardinity.model.*;
 import com.cardinity.model.Void;
+import com.cardinity.model.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.List;
 import java.util.UUID;
 
+import static com.cardinity.model.Payment.Status.*;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.*;
 
@@ -31,161 +32,255 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         client = new CardinityClient(consumerKey, consumerSecret);
     }
 
-    private static Payment createBaseCCPayment() {
+    private static Payment getBaseCCPayment() {
         Payment payment = new Payment();
         payment.setCountry("LT");
+        payment.setAmount(new BigDecimal(10));
+        payment.setCurrency("EUR");
+        payment.setDescription(TEST_PAYMENT_DESCRIPTION);
         payment.setPaymentMethod(Payment.Method.CARD);
         Card card = new Card();
         card.setPan("4111111111111111");
-        card.setCvc(1);
-        card.setExpYear(2020);
+        card.setCvc(123);
+        card.setExpYear(Calendar.getInstance().get(Calendar.YEAR) + 1);
         card.setExpMonth(1);
         card.setHolder("Cardinity Cardinity");
         payment.setPaymentInstrument(card);
-
         return payment;
+    }
+
+    private static Threeds2Data getThreeds2Data() {
+        Threeds2Data threeds2Data = new Threeds2Data();
+        threeds2Data.setNotificationUrl("http://notification.url");
+
+        BrowserInfo browserInfo = new BrowserInfo();
+        browserInfo.setAcceptHeader("text/html");
+        browserInfo.setBrowserLanguage("en-US");
+        browserInfo.setScreenWidth(1920);
+        browserInfo.setScreenHeight(1040);
+        browserInfo.setChallengeWindowSize(BrowserInfo.ChallengeWindowSize.SIZE_600X400);
+        browserInfo.setUserAgent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:21.0) Gecko/20100101 Firefox/21.0");
+        browserInfo.setColorDepth(24);
+        browserInfo.setTimeZone(-60);
+        browserInfo.setIpAddress("216.58.207.35");
+        threeds2Data.setBrowserInfo(browserInfo);
+
+        Address billingAddress = new Address();
+        billingAddress.setAddressLine1("8239 Louie Street");
+        billingAddress.setAddressLine2("line2");
+        billingAddress.setAddressLine3("line3");
+        billingAddress.setCity("Coltenburgh");
+        billingAddress.setCountry("US");
+        billingAddress.setPostalCode("84603");
+        billingAddress.setState("DC");
+        threeds2Data.setBillingAddress(billingAddress);
+
+        Address deliveryAddress = new Address();
+        deliveryAddress.setAddressLine1("Schallerallee 33");
+        deliveryAddress.setCity("Ravensburg");
+        deliveryAddress.setCountry("DE");
+        deliveryAddress.setPostalCode("82940");
+        threeds2Data.setDeliveryAddress(deliveryAddress);
+
+        CardholderInfo cardholderInfo = new CardholderInfo();
+        cardholderInfo.setEmailAddress("card.holder@example.com");
+        cardholderInfo.setMobilePhoneNumber("+353209120599");
+        cardholderInfo.setHomePhoneNumber("+353209174412");
+        cardholderInfo.setWorkPhoneNumber("+353209134251");
+        threeds2Data.setCardholderInfo(cardholderInfo);
+
+        return threeds2Data;
     }
 
     @Test
     public void testCreateApprovedPayment() {
-
-        Payment payment = createBaseCCPayment();
-        payment.setAmount(new BigDecimal(10));
-        payment.setCurrency("EUR");
-        payment.setDescription(TEST_PAYMENT_DESCRIPTION);
-
-        Result<Payment> result = client.createPayment(payment);
-        assertTrue(result.isValid());
-
-        Payment resultPayment = result.getItem();
-        assertEquals(Payment.Status.APPROVED, resultPayment.getStatus());
+        Payment resultPayment = createApprovedPayment();
+        assertEquals(APPROVED, resultPayment.getStatus());
         assertNotNull(resultPayment.getId());
         assertThat(resultPayment.getPaymentInstrument(), instanceOf(Card.class));
         assertFalse(resultPayment.getLive());
         assertEquals(TEST_PAYMENT_DESCRIPTION, resultPayment.getDescription());
+        assertFalse(resultPayment.isThreedsV2());
+        assertFalse(resultPayment.isThreedsV1());
     }
 
     @Test
     public void testCreateDeclinedPayment() {
-
-        Payment payment = createBaseCCPayment();
+        Payment payment = getBaseCCPayment();
         payment.setAmount(new BigDecimal(160));
-        payment.setCurrency("EUR");
-
         Result<Payment> result = client.createPayment(payment);
         assertTrue(result.isValid());
 
         Payment resultPayment = result.getItem();
-        assertEquals(Payment.Status.DECLINED, resultPayment.getStatus());
+        assertEquals(DECLINED, resultPayment.getStatus());
         assertNotNull(resultPayment.getId());
         assertNotNull(resultPayment.getError());
         assertThat(resultPayment.getPaymentInstrument(), instanceOf(Card.class));
         assertFalse(resultPayment.getLive());
+        assertFalse(resultPayment.isThreedsV2());
+        assertFalse(resultPayment.isThreedsV1());
     }
 
     @Test
-    public void testApprovedThreeDSecurePayment() {
-
-        Payment payment = createBaseCCPayment();
-        payment.setAmount(new BigDecimal(10));
-        payment.setCurrency("EUR");
+    public void testApprovedThreeDSecurePaymentV1() {
+        Payment payment = getBaseCCPayment();
         payment.setDescription("3d-pass");
+        Payment resultPayment = createPendingPayment(payment, false);
 
-        Result<Payment> result = client.createPayment(payment);
+        Result<Payment> result = client.finalizePayment(resultPayment.getId(), "3d-pass");
         assertTrue(result.isValid());
-
-        Payment resultPayment = result.getItem();
-        assertEquals(Payment.Status.PENDING, resultPayment.getStatus());
-        assertNotNull(resultPayment.getAuthorizationInformation());
-        assertNotNull(resultPayment.getAuthorizationInformation().getUrl());
-        assertNotNull(resultPayment.getAuthorizationInformation().getData());
-        assertEquals("3d-pass", resultPayment.getAuthorizationInformation().getData());
-
-        result = client.finalizePayment(resultPayment.getId(), "3d-pass");
-        assertTrue(result.isValid());
-        resultPayment = result.getItem();
-        assertEquals(Payment.Status.APPROVED, resultPayment.getStatus());
-        assertNotNull(resultPayment.getId());
-        assertThat(resultPayment.getPaymentInstrument(), instanceOf(Card.class));
-        assertFalse(resultPayment.getLive());
+        Payment finalizedPayment = result.getItem();
+        assertEquals(APPROVED, finalizedPayment.getStatus());
+        assertEquals(resultPayment.getId(), finalizedPayment.getId());
     }
 
     @Test
-    public void testDeclinedThreeDSecurePayment() {
-
-        Payment payment = createBaseCCPayment();
-        payment.setAmount(new BigDecimal(10));
-        payment.setCurrency("EUR");
+    public void testDeclinedThreeDSecurePaymentV1() {
+        Payment payment = getBaseCCPayment();
         payment.setDescription("3d-pass");
+        Payment resultPayment = createPendingPayment(payment, false);
 
-        Result<Payment> result = client.createPayment(payment);
+        Result<Payment> result = client.finalizePayment(resultPayment.getId(), "3d-fail");
         assertTrue(result.isValid());
+        Payment finalizedPayment = result.getItem();
+        assertEquals(DECLINED, finalizedPayment.getStatus());
+        assertEquals(resultPayment.getId(), finalizedPayment.getId());
+        assertNotNull(finalizedPayment.getError());
+        assertTrue(finalizedPayment.getError().startsWith("3333"));
+    }
 
-        Payment resultPayment = result.getItem();
-        assertEquals(Payment.Status.PENDING, resultPayment.getStatus());
-        assertNotNull(resultPayment.getAuthorizationInformation());
-        assertNotNull(resultPayment.getAuthorizationInformation().getUrl());
-        assertNotNull(resultPayment.getAuthorizationInformation().getData());
-        assertEquals("3d-pass", resultPayment.getAuthorizationInformation().getData());
+    @Test
+    public void testApprovedThreeDSecurePaymentV2() {
+        Payment payment = getBaseCCPayment();
+        payment.setDescription("3ds2-pass");
+        payment.setThreeds2Data(getThreeds2Data());
+        Payment resultPayment = createPendingPayment(payment, true);
 
-        result = client.finalizePayment(resultPayment.getId(), "3d-fail");
-        assertTrue(result.isValid());
-        resultPayment = result.getItem();
-        assertEquals(Payment.Status.DECLINED, resultPayment.getStatus());
-        assertNotNull(resultPayment.getError());
-        assertTrue(resultPayment.getError().startsWith("3333"));
-        assertNotNull(resultPayment.getId());
-        assertThat(resultPayment.getPaymentInstrument(), instanceOf(Card.class));
-        assertFalse(resultPayment.getLive());
+        Result<Payment> finalizeResult = client.finalizePaymentV2(resultPayment.getId(), "3ds2-pass");
+        assertTrue(finalizeResult.isValid());
+        Payment finalizedPayment = finalizeResult.getItem();
+        assertEquals(APPROVED, finalizedPayment.getStatus());
+        assertEquals(resultPayment.getId(), finalizedPayment.getId());
+    }
+
+    @Test
+    public void testApprovedThreeDSecurePaymentV2WithRetry() {
+        Payment payment = getBaseCCPayment();
+        ((Card)payment.getPaymentInstrument()).setPan("5454545454545454");
+        payment.setDescription("3ds2-pass");
+        payment.setThreeds2Data(getThreeds2Data());
+        Payment resultPayment = createPendingPayment(payment, true);
+
+        Result<Payment> finalizeResult = client.finalizePaymentV2(resultPayment.getId(), "3d-pass");
+        assertTrue(finalizeResult.isValid());
+        Payment finalizedPayment = finalizeResult.getItem();
+        assertEquals(PENDING, finalizedPayment.getStatus());
+        assertEquals(resultPayment.getId(), finalizedPayment.getId());
+        assertTrue(finalizedPayment.isThreedsV2());
+        assertTrue(finalizedPayment.isThreedsV1());
+
+        finalizeResult = client.finalizePaymentV2(resultPayment.getId(), "3ds2-pass");
+        assertTrue(finalizeResult.isValid());
+        finalizedPayment = finalizeResult.getItem();
+        assertEquals(APPROVED, finalizedPayment.getStatus());
+        assertEquals(resultPayment.getId(), finalizedPayment.getId());
+    }
+
+    @Test
+    public void testApprovedThreeDSecurePaymentV2WithFallbackToV1OnFinalize() {
+        Payment payment = getBaseCCPayment();
+        ((Card)payment.getPaymentInstrument()).setPan("5454545454545454");
+        payment.setDescription("3ds2-pass");
+        payment.setThreeds2Data(getThreeds2Data());
+        Payment resultPayment = createPendingPayment(payment, true);
+
+        Result<Payment> finalizeResult = client.finalizePaymentV2(resultPayment.getId(), "3d-pass");
+        assertTrue(finalizeResult.isValid());
+        Payment finalizedPayment = finalizeResult.getItem();
+        assertEquals(PENDING, finalizedPayment.getStatus());
+        assertEquals(resultPayment.getId(), finalizedPayment.getId());
+        assertTrue(finalizedPayment.isThreedsV2());
+        assertTrue(finalizedPayment.isThreedsV1());
+
+        finalizeResult = client.finalizePayment(resultPayment.getId(), "3d-pass");
+        assertTrue(finalizeResult.isValid());
+        finalizedPayment = finalizeResult.getItem();
+        assertEquals(APPROVED, finalizedPayment.getStatus());
+        assertEquals(resultPayment.getId(), finalizedPayment.getId());
+    }
+
+    @Test
+    public void testApprovedThreeDSecurePaymentV2WithFallbackToV1OnCreate() {
+        Payment payment = getBaseCCPayment();
+        payment.setDescription("3d-pass");
+        payment.setThreeds2Data(getThreeds2Data());
+        Payment resultPayment = createPendingPayment(payment, false);
+
+        Result<Payment> finalizeResult = client.finalizePayment(resultPayment.getId(), "3d-pass");
+        assertTrue(finalizeResult.isValid());
+        Payment finalizedPayment = finalizeResult.getItem();
+        assertEquals(APPROVED, finalizedPayment.getStatus());
+        assertEquals(resultPayment.getId(), finalizedPayment.getId());
+    }
+
+    @Test
+    public void testDeclinedThreeDSecurePaymentV2() {
+        Payment payment = getBaseCCPayment();
+        payment.setDescription("3ds2-pass");
+        payment.setThreeds2Data(getThreeds2Data());
+        Payment resultPayment = createPendingPayment(payment, true);
+
+        Result<Payment> finalizeResult = client.finalizePaymentV2(resultPayment.getId(), "3ds2-fail");
+        assertTrue(finalizeResult.isValid());
+        Payment finalizedPayment = finalizeResult.getItem();
+        assertEquals(DECLINED, finalizedPayment.getStatus());
+        assertEquals(resultPayment.getId(), finalizedPayment.getId());
+        assertNotNull(finalizedPayment.getError());
+        assertTrue(finalizedPayment.getError().startsWith("3333"));
     }
 
     @Test
     public void testCreateApprovedRecurringPayment() {
-
-        Payment payment = createBaseCCPayment();
-        payment.setAmount(new BigDecimal(10));
-        payment.setCurrency("EUR");
-
+        Payment initialResultPayment = createApprovedPayment();
+        Payment payment = getBaseCCPayment();
+        payment.setAmount(new BigDecimal(20));
         payment.setPaymentMethod(Payment.Method.RECURRING);
         Recurring recurringPayment = new Recurring();
-        recurringPayment.setPaymentId(UUID.fromString("914f6d2a-f4a9-4cc5-992e-5842ebf3f257"));
+        recurringPayment.setPaymentId(initialResultPayment.getId());
         payment.setPaymentInstrument(recurringPayment);
         Result<Payment> result = client.createPayment(payment);
         assertTrue(result.isValid());
-        assertEquals(Payment.Status.APPROVED, result.getItem().getStatus());
+        assertEquals(APPROVED, result.getItem().getStatus());
     }
 
     @Test
     public void testCreateDeclinedRecurringPayment() {
-
-        Payment payment = createBaseCCPayment();
+        Payment initialResultPayment = createApprovedPayment();
+        Payment payment = getBaseCCPayment();
         payment.setAmount(new BigDecimal(160));
-        payment.setCurrency("EUR");
-
         payment.setPaymentMethod(Payment.Method.RECURRING);
         Recurring recurringPayment = new Recurring();
-        recurringPayment.setPaymentId(UUID.fromString("914f6d2a-f4a9-4cc5-992e-5842ebf3f257"));
+        recurringPayment.setPaymentId(initialResultPayment.getId());
         payment.setPaymentInstrument(recurringPayment);
         Result<Payment> result = client.createPayment(payment);
         assertTrue(result.isValid());
-        assertEquals(Payment.Status.DECLINED, result.getItem().getStatus());
+        assertEquals(DECLINED, result.getItem().getStatus());
     }
 
     @Test
     public void testGetExistingPayment() {
-
-        UUID paymentId = UUID.fromString("914f6d2a-f4a9-4cc5-992e-5842ebf3f257");
-        Result<Payment> result = client.getPayment(paymentId);
+        Payment initialResultPayment = createApprovedPayment();
+        Result<Payment> result = client.getPayment(initialResultPayment.getId());
         assertTrue(result.isValid());
 
         Payment resultPayment = result.getItem();
-        assertEquals(paymentId, resultPayment.getId());
+        assertEquals(initialResultPayment.getId(), resultPayment.getId());
+        assertEquals(initialResultPayment.getStatus(), resultPayment.getStatus());
     }
 
     @Test
     public void testGetNotExistingPayment() {
-
-        UUID paymentId = UUID.fromString("914f6d2a-f4a9-4cc5-992e-5842ebf3f251");
+        UUID paymentId = UUID.fromString("00000000-0000-0000-0000-000000000000");
         Result<Payment> result = client.getPayment(paymentId);
         assertFalse(result.isValid());
 
@@ -198,39 +293,28 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
 
     @Test
     public void testGetPaymentsListWithLimit() {
-        Result<List<Payment>> result = client.getPayments(1);
-
+        Result<List<Payment>> result = client.getPayments(2);
         assertTrue(result.isValid());
-        assertEquals(1, result.getItem().size());
-    }
-
-    @Test(expected = ValidationException.class)
-    public void testGetPaymentsListWithInvalidLimit() {
-        client.getPayments(-1);
+        assertEquals(2, result.getItem().size());
     }
 
     @Test
     public void testGetPaymentsList() {
         Result<List<Payment>> result = client.getPayments();
-
         assertTrue(result.isValid());
         assertEquals(10, result.getItem().size());
     }
 
     @Test
     public void testCreateApprovedRefund() {
-        Payment payment = createBaseCCPayment();
-        payment.setAmount(new BigDecimal(10));
-        payment.setCurrency("EUR");
+        Payment payment = getBaseCCPayment();
         payment.setOrderId(TEST_ORDER_ID);
-
         Result<Payment> result = client.createPayment(payment);
         assertTrue(result.isValid());
         Payment resultPayment = result.getItem();
-        assertEquals(Payment.Status.APPROVED, resultPayment.getStatus());
-
+        assertEquals(APPROVED, resultPayment.getStatus());
         Refund refund = new Refund();
-        refund.setAmount(payment.getAmount());
+        refund.setAmount(resultPayment.getAmount());
         refund.setDescription(TEST_REFUND_DESCRIPTION);
         Result<Refund> refundResult = client.createRefund(resultPayment.getId(), refund);
         assertTrue(refundResult.isValid());
@@ -240,15 +324,8 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
 
     @Test
     public void testCreateDeclinedRefund() {
-        Payment payment = createBaseCCPayment();
-        payment.setAmount(new BigDecimal(10));
-        payment.setCurrency("EUR");
-        Result<Payment> result = client.createPayment(payment);
-        assertTrue(result.isValid());
-        Payment resultPayment = result.getItem();
-        assertEquals(Payment.Status.APPROVED, resultPayment.getStatus());
-
-        Refund refund = new Refund(payment.getAmount(), "fail");
+        Payment resultPayment = createApprovedPayment();
+        Refund refund = new Refund(resultPayment.getAmount(), "fail");
         Result<Refund> refundResult = client.createRefund(resultPayment.getId(), refund);
         assertTrue(refundResult.isValid());
         assertEquals(Refund.Status.DECLINED, refundResult.getItem().getStatus());
@@ -256,33 +333,33 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     }
 
     @Test
-    public void testGetRefund() {
-
-        Result<Refund> refundsResult = client.getRefund(UUID.fromString("9bdea847-b6bc-491c-877a-4663ae49c0b9"), UUID
-                .fromString("f862506b-9a5b-4127-9c1f-2e0635bfb805"));
-        assertTrue(refundsResult.isValid());
-        assertEquals(UUID.fromString("f862506b-9a5b-4127-9c1f-2e0635bfb805"), refundsResult.getItem().getId());
-    }
-
-    @Test
     public void testGetRefunds() {
+        Payment resultPayment = createApprovedPayment();
+        Refund refund = new Refund();
+        refund.setAmount(resultPayment.getAmount());
+        Result<Refund> initialRefundResult = client.createRefund(resultPayment.getId(), refund);
+        assertTrue(initialRefundResult.isValid());
+        assertEquals(Refund.Status.APPROVED, initialRefundResult.getItem().getStatus());
+        Refund resultRefund = initialRefundResult.getItem();
 
-        Result<List<Refund>> refundsResult = client.getRefunds(UUID.fromString("9bdea847-b6bc-491c-877a-4663ae49c0b9"));
+        Result<Refund> refundResult = client.getRefund(resultPayment.getId(), resultRefund.getId());
+        assertTrue(refundResult.isValid());
+        assertEquals(resultRefund.getId(), refundResult.getItem().getId());
+        assertEquals(resultRefund.getStatus(), refundResult.getItem().getStatus());
+
+        Result<List<Refund>> refundsResult = client.getRefunds(resultPayment.getId());
         assertTrue(refundsResult.isValid());
         assertEquals(1, refundsResult.getItem().size());
     }
 
     @Test
     public void testCreateApprovedVoid() {
-
-        Payment payment = createBaseCCPayment();
-        payment.setAmount(new BigDecimal(10));
-        payment.setCurrency("EUR");
+        Payment payment = getBaseCCPayment();
         payment.setSettle(false);
         Result<Payment> result = client.createPayment(payment);
         assertTrue(result.isValid());
         Payment resultPayment = result.getItem();
-        assertEquals(Payment.Status.APPROVED, resultPayment.getStatus());
+        assertEquals(APPROVED, resultPayment.getStatus());
 
         Void voidP = new Void();
         voidP.setDescription(TEST_VOID_DESCRIPTION);
@@ -294,15 +371,12 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
 
     @Test
     public void testCreateDeclinedVoid() {
-
-        Payment payment = createBaseCCPayment();
-        payment.setAmount(new BigDecimal(10));
-        payment.setCurrency("EUR");
+        Payment payment = getBaseCCPayment();
         payment.setSettle(false);
         Result<Payment> result = client.createPayment(payment);
         assertTrue(result.isValid());
         Payment resultPayment = result.getItem();
-        assertEquals(Payment.Status.APPROVED, resultPayment.getStatus());
+        assertEquals(APPROVED, resultPayment.getStatus());
 
         Void voidP = new Void();
         voidP.setDescription("fail");
@@ -313,33 +387,38 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     }
 
     @Test
-    public void testGetVoid() {
-
-        Result<Void> voidResult = client.getVoid(UUID.fromString("e51690e7-4a35-4604-9fd6-6bc1fc772264"), UUID
-                .fromString("d1cb56bb-5081-4c38-8f4d-7069e38989cc"));
-        assertTrue(voidResult.isValid());
-        assertEquals(UUID.fromString("d1cb56bb-5081-4c38-8f4d-7069e38989cc"), voidResult.getItem().getId());
-    }
-
-    @Test
     public void testGetVoids() {
-
-        Result<List<Void>> voids = client.getVoids(UUID.fromString("e51690e7-4a35-4604-9fd6-6bc1fc772264"));
-        assertTrue(voids.isValid());
-        assertEquals(1, voids.getItem().size());
-    }
-
-    @Test
-    public void testCreateApprovedSettlement() {
-
-        Payment payment = createBaseCCPayment();
-        payment.setAmount(new BigDecimal(10));
-        payment.setCurrency("EUR");
+        Payment payment = getBaseCCPayment();
         payment.setSettle(false);
         Result<Payment> result = client.createPayment(payment);
         assertTrue(result.isValid());
         Payment resultPayment = result.getItem();
-        assertEquals(Payment.Status.APPROVED, resultPayment.getStatus());
+        assertEquals(APPROVED, resultPayment.getStatus());
+
+        Void initialVoid = new Void();
+        Result<Void> initialVoidResult = client.createVoid(resultPayment.getId(), initialVoid);
+        assertTrue(initialVoidResult.isValid());
+        Void initialResultVoid = initialVoidResult.getItem();
+        assertEquals(Void.Status.APPROVED, initialResultVoid.getStatus());
+
+        Result<Void> voidResult = client.getVoid(resultPayment.getId(), initialResultVoid.getId());
+        assertTrue(voidResult.isValid());
+        assertEquals(initialResultVoid.getId(), voidResult.getItem().getId());
+        assertEquals(initialResultVoid.getStatus(), voidResult.getItem().getStatus());
+
+        Result<List<Void>> voidsResult = client.getVoids(resultPayment.getId());
+        assertTrue(voidsResult.isValid());
+        assertEquals(1, voidsResult.getItem().size());
+    }
+
+    @Test
+    public void testCreateApprovedSettlement() {
+        Payment payment = getBaseCCPayment();
+        payment.setSettle(false);
+        Result<Payment> result = client.createPayment(payment);
+        assertTrue(result.isValid());
+        Payment resultPayment = result.getItem();
+        assertEquals(APPROVED, resultPayment.getStatus());
 
         Settlement settlement = new Settlement();
         settlement.setAmount(new BigDecimal(9.99));
@@ -352,15 +431,12 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
 
     @Test
     public void testCreateDeclinedSettlement() {
-
-        Payment payment = createBaseCCPayment();
-        payment.setAmount(new BigDecimal(10));
-        payment.setCurrency("EUR");
+        Payment payment = getBaseCCPayment();
         payment.setSettle(false);
         Result<Payment> result = client.createPayment(payment);
         assertTrue(result.isValid());
         Payment resultPayment = result.getItem();
-        assertEquals(Payment.Status.APPROVED, resultPayment.getStatus());
+        assertEquals(APPROVED, resultPayment.getStatus());
 
         Settlement settlement = new Settlement();
         settlement.setAmount(new BigDecimal(9.99));
@@ -372,21 +448,58 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     }
 
     @Test
-    public void testGetSettlement() {
-
-        Result<Settlement> settlementResult = client.getSettlement(UUID.fromString
-                ("8b492bfc-0e6a-45c7-a50e-073b511eca6c"), UUID.fromString("b98bb227-1074-465a-92a7-694aae992dcb"));
-        assertTrue(settlementResult.isValid());
-        assertEquals(UUID.fromString("b98bb227-1074-465a-92a7-694aae992dcb"), settlementResult.getItem().getId());
-    }
-
-    @Test
     public void testGetSettlements() {
+        Payment payment = getBaseCCPayment();
+        payment.setSettle(false);
+        Result<Payment> result = client.createPayment(payment);
+        assertTrue(result.isValid());
+        Payment resultPayment = result.getItem();
+        assertEquals(APPROVED, resultPayment.getStatus());
 
-        Result<List<Settlement>> settlements = client.getSettlements(UUID.fromString("8b492bfc-0e6a-45c7-a50e" +
-                "-073b511eca6c"));
+        Settlement initialSettlement = new Settlement();
+        initialSettlement.setAmount(new BigDecimal(9.99));
+        Result<Settlement> initialSettlementResult = client.createSettlement(resultPayment.getId(), initialSettlement);
+        assertTrue(initialSettlementResult.isValid());
+        Settlement initialResultSettlement = initialSettlementResult.getItem();
+        assertEquals(Settlement.Status.APPROVED, initialResultSettlement.getStatus());
+
+        Result<Settlement> settlementResult = client.getSettlement(resultPayment.getId(), initialResultSettlement.getId());
+        assertTrue(settlementResult.isValid());
+        assertEquals(initialResultSettlement.getId(), settlementResult.getItem().getId());
+        assertEquals(initialResultSettlement.getStatus(), settlementResult.getItem().getStatus());
+
+        Result<List<Settlement>> settlements = client.getSettlements(resultPayment.getId());
         assertTrue(settlements.isValid());
         assertEquals(1, settlements.getItem().size());
     }
 
+    private Payment createApprovedPayment() {
+        Payment payment = getBaseCCPayment();
+        Result<Payment> initialResult = client.createPayment(payment);
+        assertTrue(initialResult.isValid());
+        Payment resultPayment = initialResult.getItem();
+        assertEquals(APPROVED, resultPayment.getStatus());
+        return resultPayment;
+    }
+
+    private Payment createPendingPayment(Payment payment, boolean v2) {
+        Result<Payment> result = client.createPayment(payment);
+        assertTrue(result.isValid());
+        Payment resultPayment = result.getItem();
+        assertEquals(PENDING, resultPayment.getStatus());
+        assertEquals(v2, resultPayment.isThreedsV2());
+        assertEquals(!v2, resultPayment.isThreedsV1());
+        if (v2) {
+            assertNotNull(resultPayment.getThreeds2AuthorizationInformation());
+            assertNotNull(resultPayment.getThreeds2AuthorizationInformation().getAcsUrl());
+            assertNotNull(resultPayment.getThreeds2AuthorizationInformation().getCReq());
+            assertNull(resultPayment.getAuthorizationInformation());
+        } else {
+            assertNotNull(resultPayment.getAuthorizationInformation());
+            assertNotNull(resultPayment.getAuthorizationInformation().getUrl());
+            assertNotNull(resultPayment.getAuthorizationInformation().getData());
+            assertNull(resultPayment.getThreeds2AuthorizationInformation());
+        }
+        return resultPayment;
+    }
 }

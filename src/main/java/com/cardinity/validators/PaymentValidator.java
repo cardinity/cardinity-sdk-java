@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 public class PaymentValidator implements Validator<Payment> {
 
     private static final String MINIMUM_AMOUNT = "0.50";
+    private static final Threeds2DataValidator THREEDS_2_DATA_VALIDATOR = new Threeds2DataValidator();
 
     @Override
     public void validate(Payment payment) {
@@ -50,6 +51,10 @@ public class PaymentValidator implements Validator<Payment> {
         if (payment.getDescription() != null && !ValidationUtils.validateIntervalLength(payment.getDescription(), 0,
                 255))
             throw new ValidationException("Description maximum length 255 characters.");
+
+        if (payment.getThreeds2Data() != null) {
+            THREEDS_2_DATA_VALIDATOR.validate(payment.getThreeds2Data());
+        }
     }
 
     private void validateCard(Card card) {

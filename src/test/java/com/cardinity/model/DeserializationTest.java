@@ -70,8 +70,8 @@ public class DeserializationTest extends CardinityBaseTest {
     }
 
     @Test
-    public void testDeserializePendingPayment() throws IOException, ParseException {
-        String json = resource("pending_payment.json");
+    public void testDeserializePendingPaymentFlowV1() throws IOException, ParseException {
+        String json = resource("pending_payment_v1.json");
         Payment payment = RestResource.GSON.fromJson(json, Payment.class);
 
         assertEquals(UUID.fromString("8e037fbb-fe5b-4781-b109-b3e93d5f2c0d"), payment.getId());
@@ -98,6 +98,38 @@ public class DeserializationTest extends CardinityBaseTest {
         assertNotNull(payment.getAuthorizationInformation());
         assertEquals("https://authorization.url/auth", payment.getAuthorizationInformation().getUrl());
         assertEquals("eJxdUl1vwjagsagsagsagasgasgsagasgsa", payment.getAuthorizationInformation().getData());
+    }
+
+    @Test
+    public void testDeserializePendingPaymentFlowV2() throws IOException, ParseException {
+        String json = resource("pending_payment_v2.json");
+        Payment payment = RestResource.GSON.fromJson(json, Payment.class);
+
+        assertEquals(UUID.fromString("8e037fbb-fe5b-4781-b109-b3e93d5f2c0d"), payment.getId());
+        assertEquals("EUR", payment.getCurrency());
+        assertEquals(new BigDecimal("20.00"), payment.getAmount());
+        assertEquals(formatterWithMillis.parse("2014-12-17T09:43:31.123Z"), payment.getCreated());
+        assertFalse(payment.getLive());
+        assertEquals(Payment.Type.AUTHORIZATION, payment.getType());
+        assertEquals(Payment.Status.PENDING, payment.getStatus());
+        assertEquals("1234567", payment.getOrderId());
+        assertEquals("some description", payment.getDescription());
+        assertEquals("LT", payment.getCountry());
+        assertEquals(Payment.Method.CARD, payment.getPaymentMethod());
+        assertNotNull(payment.getPaymentInstrument());
+        assertEquals(Payment.Method.CARD, payment.getPaymentInstrument().getType());
+
+        Card card = (Card) payment.getPaymentInstrument();
+        assertEquals("4447", card.getPan());
+        assertEquals("John Smith", card.getHolder());
+        assertEquals("Visa", card.getCardBrand());
+        assertEquals(Integer.valueOf(2017), card.getExpYear());
+        assertEquals(Integer.valueOf(5), card.getExpMonth());
+
+        assertNull(payment.getAuthorizationInformation());
+        assertNotNull(payment.getThreeds2AuthorizationInformation());
+        assertEquals("https://authorization.url/3ds2/auth", payment.getThreeds2AuthorizationInformation().getAcsUrl());
+        assertEquals("34uifnui3n4fio3fo3", payment.getThreeds2AuthorizationInformation().getCReq());
     }
 
     @Test(expected = CardinityException.class)
