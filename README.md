@@ -1,5 +1,5 @@
 # Cardinity SDK Java 
-[![Build Status](https://travis-ci.org/cardinity/cardinity-sdk-java.svg?branch=master)](http://travis-ci.org/cardinity/cardinity-sdk-java)
+[![Build Status](https://app.travis-ci.com/cardinity/cardinity-sdk-java.svg?branch=master)](https://app.travis-ci.com/cardinity/cardinity-sdk-java)
 
 Java SDK for cardinity payment gateway. Library includes all the functionality provided by API. 
 
