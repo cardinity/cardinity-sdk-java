@@ -55,6 +55,10 @@ public class PaymentValidator implements Validator<Payment> {
         if (payment.getThreeds2Data() != null) {
             THREEDS_2_DATA_VALIDATOR.validate(payment.getThreeds2Data());
         }
+
+        if (payment.getStatementDescriptorSuffix() != null &&
+                !ValidationUtils.validateIntervalLength(payment.getStatementDescriptorSuffix(), 0,6))
+            throw new ValidationException("Statement descriptor suffix maximum length 6 characters.");
     }
 
     private void validateCard(Card card) {

@@ -100,6 +100,17 @@ public class PaymentValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
+    public void testValidateWrongStatementDescriptorSuffix() throws Exception {
+        payment.setStatementDescriptorSuffix("Long statement descriptor Suffix provided.");
+        paymentValidator.validate(payment);
+    }
+    @Test
+    public void testValidateRightStatementDescriptorSuffix() throws Exception {
+        payment.setStatementDescriptorSuffix("Suffix");
+        paymentValidator.validate(payment);
+    }
+
+    @Test(expected = ValidationException.class)
     public void testValidateWrongCardPAN() throws Exception {
         Card card = (Card) payment.getPaymentInstrument();
         card.setPan("123412341231234");

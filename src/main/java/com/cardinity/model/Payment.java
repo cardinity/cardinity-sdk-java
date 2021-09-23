@@ -15,6 +15,7 @@ public class Payment {
     private Type type;
     private Boolean live;
     private String description;
+    private String statementDescriptorSuffix;
     /**
      * @deprecated Unused and should be removed
      */
@@ -127,6 +128,14 @@ public class Payment {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getStatementDescriptorSuffix() {
+        return statementDescriptorSuffix;
+    }
+
+    public void setStatementDescriptorSuffix(String statementDescriptorSuffix) {
+        this.statementDescriptorSuffix = statementDescriptorSuffix;
     }
 
     /**

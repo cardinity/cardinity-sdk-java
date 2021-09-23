@@ -1,5 +1,6 @@
 package com.cardinity;
 
+import com.cardinity.exceptions.ValidationException;
 import com.cardinity.model.Void;
 import com.cardinity.model.*;
 import org.junit.BeforeClass;
@@ -119,6 +120,30 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         assertFalse(resultPayment.getLive());
         assertFalse(resultPayment.isThreedsV2());
         assertFalse(resultPayment.isThreedsV1());
+    }
+
+    @Test
+    public void testCreateApprovedPaymentWithDescriptorSuffix() {
+        Payment payment = getBaseCCPayment();
+        payment.setStatementDescriptorSuffix("Suffix");
+        Result<Payment> initialResult = client.createPayment(payment);
+        assertTrue(initialResult.isValid());
+        Payment resultPayment = initialResult.getItem();
+        assertEquals(APPROVED, resultPayment.getStatus());
+        assertNotNull(resultPayment.getId());
+        assertThat(resultPayment.getPaymentInstrument(), instanceOf(Card.class));
+        assertFalse(resultPayment.getLive());
+        assertEquals(TEST_PAYMENT_DESCRIPTION, resultPayment.getDescription());
+        assertFalse(resultPayment.isThreedsV2());
+        assertFalse(resultPayment.isThreedsV1());
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testCreateDeclinedPaymentWithDescriptorSuffix() {
+        Payment payment = getBaseCCPayment();
+        payment.setStatementDescriptorSuffix("Long statement descriptor Suffix provided.");
+        Result<Payment> initialResult = client.createPayment(payment);
+        assertTrue(initialResult.isValid());
     }
 
     @Test
