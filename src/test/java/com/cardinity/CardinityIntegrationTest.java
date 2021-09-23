@@ -125,7 +125,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     @Test
     public void testCreateApprovedPaymentWithDescriptorSuffix() {
         Payment payment = getBaseCCPayment();
-        payment.setStatementDescriptorSuffix("Suffix");
+        payment.setStatementDescriptorSuffix("DS");
         Result<Payment> initialResult = client.createPayment(payment);
         assertTrue(initialResult.isValid());
         Payment resultPayment = initialResult.getItem();
@@ -136,14 +136,6 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         assertEquals(TEST_PAYMENT_DESCRIPTION, resultPayment.getDescription());
         assertFalse(resultPayment.isThreedsV2());
         assertFalse(resultPayment.isThreedsV1());
-    }
-
-    @Test(expected = ValidationException.class)
-    public void testCreateDeclinedPaymentWithDescriptorSuffix() {
-        Payment payment = getBaseCCPayment();
-        payment.setStatementDescriptorSuffix("Long statement descriptor Suffix provided.");
-        Result<Payment> initialResult = client.createPayment(payment);
-        assertTrue(initialResult.isValid());
     }
 
     @Test
