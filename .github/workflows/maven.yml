@@ -19,4 +19,4 @@ jobs:
         distribution: 'adopt'
         cache: maven
     - name: Test
-      run: mvn test -DskipITs
+      run: mvn test
