@@ -22,4 +22,7 @@ jobs:
         distribution: 'adopt'
         cache: maven
     - name: Run Maven Verify
+      env:
+        CRD_KEY: ${{secrets.CRD_KEY}}
+        CRD_SECRET: ${{secrets.CRD_SECRET}}
       run: mvn clean verify -Dgpg.skip=true
