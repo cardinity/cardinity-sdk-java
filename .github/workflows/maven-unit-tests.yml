@@ -3,7 +3,10 @@
 
 name: Unit tests
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   unit-tests:
@@ -17,4 +20,4 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Run unit tests
-        run: mvn test
+        run: mvn clean test
