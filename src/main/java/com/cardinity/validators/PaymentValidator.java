@@ -38,7 +38,8 @@ public class PaymentValidator implements Validator<Payment> {
             throw new ValidationException("Payment instrument and payment type mismatch.");
 
         if (payment.getPaymentInstrument().getType() == Payment.Method.CARD)
-            validateCard((Card) payment.getPaymentInstrument());
+            validateCard((Card) payment.getPaymentInstrument(),
+                    payment.getDescription() != null && payment.getDescription().startsWith("CRD-MOTO"));
         else if (payment.getPaymentInstrument().getType() == Payment.Method.RECURRING)
             validateRecurring((Recurring) payment.getPaymentInstrument());
         else
@@ -60,7 +61,7 @@ public class PaymentValidator implements Validator<Payment> {
             throw new ValidationException("Statement descriptor suffix maximum length 20 characters.");
     }
 
-    private void validateCard(Card card) {
+    private void validateCard(Card card, boolean moto) {
 
         if (!ValidationUtils.validateInteger(card.getExpMonth(), 1, 12))
             throw new ValidationException("Invalid card exp month. Must be between 1 and 12.");
@@ -68,7 +69,7 @@ public class PaymentValidator implements Validator<Payment> {
         if (!ValidationUtils.validateInteger(card.getExpYear(), 2000, 2100))
             throw new ValidationException("Invalid card exp year.");
 
-        if (!ValidationUtils.validateInteger(card.getCvc(), 0, 9999))
+        if ((!moto || card.getCvc() != null) && !ValidationUtils.validateInteger(card.getCvc(), 0, 9999))
             throw new ValidationException("Invalid card cvc code. Must be 3 or 4 numbers.");
 
         if (!ValidationUtils.validateIntervalLength(card.getHolder(), 1, 32))

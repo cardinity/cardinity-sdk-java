@@ -17,7 +17,9 @@ public class CardSerializer implements JsonSerializer<Card> {
         jsonObject.addProperty("pan", card.getPan());
         jsonObject.addProperty("exp_year", card.getExpYear());
         jsonObject.addProperty("exp_month", card.getExpMonth());
-        jsonObject.addProperty("cvc", String.format("%03d", card.getCvc()));
+        if (card.getCvc() != null) {
+            jsonObject.addProperty("cvc", String.format("%03d", card.getCvc()));
+        }
         jsonObject.addProperty("holder", card.getHolder());
 
         return jsonObject;

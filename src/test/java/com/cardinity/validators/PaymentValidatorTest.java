@@ -125,6 +125,29 @@ public class PaymentValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
+    public void testValidateMissingCardCvc() {
+        Card card = (Card) payment.getPaymentInstrument();
+        card.setCvc(null);
+        paymentValidator.validate(payment);
+    }
+
+    @Test
+    public void testValidateMotoOptionalCardCvc() {
+        Card card = (Card) payment.getPaymentInstrument();
+        card.setCvc(null);
+        payment.setDescription("CRD-MOTO description");
+        paymentValidator.validate(payment);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testValidateMotoWrongCardCvc() {
+        Card card = (Card) payment.getPaymentInstrument();
+        card.setCvc(10000);
+        payment.setDescription("CRD-MOTO description");
+        paymentValidator.validate(payment);
+    }
+
+    @Test(expected = ValidationException.class)
     public void testValidateWrongCardExpMonth() throws Exception {
         Card card = (Card) payment.getPaymentInstrument();
         card.setExpMonth(13);
