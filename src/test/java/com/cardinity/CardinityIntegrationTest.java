@@ -1,6 +1,5 @@
 package com.cardinity;
 
-import com.cardinity.exceptions.ValidationException;
 import com.cardinity.model.Void;
 import com.cardinity.model.*;
 import org.junit.BeforeClass;
@@ -139,34 +138,6 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     }
 
     @Test
-    public void testApprovedThreeDSecurePaymentV1() {
-        Payment payment = getBaseCCPayment();
-        payment.setDescription("3d-pass");
-        Payment resultPayment = createPendingPayment(payment, false);
-
-        Result<Payment> result = client.finalizePayment(resultPayment.getId(), "3d-pass");
-        assertTrue(result.isValid());
-        Payment finalizedPayment = result.getItem();
-        assertEquals(APPROVED, finalizedPayment.getStatus());
-        assertEquals(resultPayment.getId(), finalizedPayment.getId());
-    }
-
-    @Test
-    public void testDeclinedThreeDSecurePaymentV1() {
-        Payment payment = getBaseCCPayment();
-        payment.setDescription("3d-pass");
-        Payment resultPayment = createPendingPayment(payment, false);
-
-        Result<Payment> result = client.finalizePayment(resultPayment.getId(), "3d-fail");
-        assertTrue(result.isValid());
-        Payment finalizedPayment = result.getItem();
-        assertEquals(DECLINED, finalizedPayment.getStatus());
-        assertEquals(resultPayment.getId(), finalizedPayment.getId());
-        assertNotNull(finalizedPayment.getError());
-        assertTrue(finalizedPayment.getError().startsWith("3333"));
-    }
-
-    @Test
     public void testApprovedThreeDSecurePaymentV2() {
         Payment payment = getBaseCCPayment();
         payment.setDescription("3ds2-pass");
@@ -174,43 +145,6 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         Payment resultPayment = createPendingPayment(payment, true);
 
         Result<Payment> finalizeResult = client.finalizePaymentV2(resultPayment.getId(), "3ds2-pass");
-        assertTrue(finalizeResult.isValid());
-        Payment finalizedPayment = finalizeResult.getItem();
-        assertEquals(APPROVED, finalizedPayment.getStatus());
-        assertEquals(resultPayment.getId(), finalizedPayment.getId());
-    }
-
-    @Test
-    public void testApprovedThreeDSecurePaymentV2WithFallbackToV1OnFinalize() {
-        Payment payment = getBaseCCPayment();
-        ((Card)payment.getPaymentInstrument()).setPan("5454545454545454");
-        payment.setDescription("3ds2-pass");
-        payment.setThreeds2Data(getThreeds2Data());
-        Payment resultPayment = createPendingPayment(payment, true);
-
-        Result<Payment> finalizeResult = client.finalizePaymentV2(resultPayment.getId(), "3d-pass");
-        assertTrue(finalizeResult.isValid());
-        Payment finalizedPayment = finalizeResult.getItem();
-        assertEquals(PENDING, finalizedPayment.getStatus());
-        assertEquals(resultPayment.getId(), finalizedPayment.getId());
-        assertFalse(finalizedPayment.isThreedsV2());
-        assertTrue(finalizedPayment.isThreedsV1());
-
-        finalizeResult = client.finalizePayment(resultPayment.getId(), "3d-pass");
-        assertTrue(finalizeResult.isValid());
-        finalizedPayment = finalizeResult.getItem();
-        assertEquals(APPROVED, finalizedPayment.getStatus());
-        assertEquals(resultPayment.getId(), finalizedPayment.getId());
-    }
-
-    @Test
-    public void testApprovedThreeDSecurePaymentV2WithFallbackToV1OnCreate() {
-        Payment payment = getBaseCCPayment();
-        payment.setDescription("3d-pass");
-        payment.setThreeds2Data(getThreeds2Data());
-        Payment resultPayment = createPendingPayment(payment, false);
-
-        Result<Payment> finalizeResult = client.finalizePayment(resultPayment.getId(), "3d-pass");
         assertTrue(finalizeResult.isValid());
         Payment finalizedPayment = finalizeResult.getItem();
         assertEquals(APPROVED, finalizedPayment.getStatus());
