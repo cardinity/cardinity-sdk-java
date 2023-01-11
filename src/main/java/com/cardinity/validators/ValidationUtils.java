@@ -1,6 +1,7 @@
 package com.cardinity.validators;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 public final class ValidationUtils {
 
@@ -29,6 +30,10 @@ public final class ValidationUtils {
 
     public static boolean isBlank(String value) {
         return value == null || value.trim().length() == 0;
+    }
+
+    public static boolean isDateInFuture(Date date) {
+        return date.after(new Date());
     }
 
     private static boolean isValidLuhnNumber(String number) {

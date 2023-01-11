@@ -1,0 +1,12 @@
+{
+  "id": "b6aca927-0a13-4b0f-8d71-d3d140143216",
+  "url": "https://checkout.cardinity.com/link/b6aca927-0a13-4b0f-8d71-d3d140143216",
+  "amount": "1.00",
+  "currency": "EUR",
+  "country": "LT",
+  "description": "My order description",
+  "order_id": "00001",
+  "expiration_date": "2023-01-06T09:05:27.981Z",
+  "multiple_use": false,
+  "enabled": true
+}

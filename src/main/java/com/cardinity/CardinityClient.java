@@ -38,12 +38,15 @@ public class CardinityClient {
     };
     private final static TypeToken<List<Chargeback>> CHARGEBACK_LIST_TYPE = new TypeToken<List<Chargeback>>() {
     };
+    private final static TypeToken<PaymentLink> PAYMENT_LINK_TYPE = new TypeToken<PaymentLink>() {
+    };
 
     private final static Validator<Payment> paymentValidator = new PaymentValidator();
     private final static Validator<Refund> refundValidator = new RefundValidator();
     private final static Validator<Settlement> settlementValidator = new SettlementValidator();
     private final static Validator<Void> voidValidator = new VoidValidator();
     private final static Validator<Chargeback> chargebackValidator = new ChargebackValidator();
+    private final static Validator<PaymentLink> paymentLinkValidator = new PaymentLinkValidator();
 
     private final RestClient restClient;
 
@@ -373,6 +376,11 @@ public class CardinityClient {
 
         return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(paymentId, RestResource.Resource.CHARGEBACKS),
                 CHARGEBACK_LIST_TYPE);
+    }
+
+    public Result<PaymentLink> createPaymentLink(PaymentLink paymentLink) {
+        paymentLinkValidator.validate(paymentLink);
+        return restClient.sendRequest(RequestMethod.POST, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS), PAYMENT_LINK_TYPE, paymentLink);
     }
 
 }
