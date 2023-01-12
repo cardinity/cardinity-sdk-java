@@ -391,6 +391,54 @@ else {
 }
 ```
 
+### Payment Link API
+
+#### Create a new payment link
+
+```java
+PaymentLink paymentLink = new PaymentLink();
+paymentLink.setAmount(new BigDecimal("1.00"));
+paymentLink.setCurrency("EUR");
+
+Result<PaymentLink> result = client.createPaymentLink(paymentLink);
+
+if (result.isValid()) {
+    PaymentLink paymentLink = result.getItem();
+}
+else {
+    CardinityError error = result.getCardinityError();
+}
+```
+
+#### Update a payment link
+
+```java
+PaymentLinkUpdate paymentLinkUpdate = new PaymentLinkUpdate();
+paymentLinkUpdate.setEnabled(false);
+
+Result<PaymentLink> result = client.updatePaymentLink(existingPaymentLinkId, paymentLinkUpdate);
+
+if (result.isValid()) {
+    PaymentLink paymentLink = result.getItem();
+}
+else {
+    CardinityError error = result.getCardinityError();
+}
+```
+
+#### Get a payment link
+
+```java
+Result<PaymentLink> result = client.updatePaymentLink(existingPaymentLinkId);
+
+if (result.isValid()) {
+    PaymentLink paymentLink = result.getItem();
+}
+else {
+    CardinityError error = result.getCardinityError();
+}
+```
+
 ## Exceptions
 
 Call of `CardinityClient` methods may result in unchecked exception being thrown. 
