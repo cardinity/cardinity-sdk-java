@@ -35,6 +35,10 @@ public final class URLUtils {
         return buildCardinityUrl(resource, null, null, null);
     }
 
+    public static String buildUrl(Resource resource, UUID resourceId) {
+        return buildCardinityUrl(resource, resourceId, null, null);
+    }
+
     private static String buildCardinityUrl(UUID paymentId, Resource action, UUID actionId) {
         return buildCardinityUrl(Resource.PAYMENTS, paymentId, action, actionId);
     }

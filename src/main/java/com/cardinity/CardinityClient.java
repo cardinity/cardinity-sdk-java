@@ -47,6 +47,7 @@ public class CardinityClient {
     private final static Validator<Void> voidValidator = new VoidValidator();
     private final static Validator<Chargeback> chargebackValidator = new ChargebackValidator();
     private final static Validator<PaymentLink> paymentLinkValidator = new PaymentLinkValidator();
+    private final static Validator<PaymentLinkUpdate> paymentLinkUpdateValidator = new PaymentLinkUpdateValidator();
 
     private final RestClient restClient;
 
@@ -381,6 +382,12 @@ public class CardinityClient {
     public Result<PaymentLink> createPaymentLink(PaymentLink paymentLink) {
         paymentLinkValidator.validate(paymentLink);
         return restClient.sendRequest(RequestMethod.POST, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS), PAYMENT_LINK_TYPE, paymentLink);
+    }
+
+    public Result<PaymentLink> updatePaymentLink(UUID paymentLinkId, PaymentLinkUpdate paymentLinkUpdate) {
+        paymentLinkUpdateValidator.validate(paymentLinkUpdate);
+        return restClient.sendRequest(RequestMethod.PATCH, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS, paymentLinkId), PAYMENT_LINK_TYPE,
+                paymentLinkUpdate);
     }
 
 }

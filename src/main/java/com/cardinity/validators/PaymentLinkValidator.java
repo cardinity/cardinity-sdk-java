@@ -22,7 +22,7 @@ public class PaymentLinkValidator implements Validator<PaymentLink> {
         if (!ValidationUtils.validateAmount(paymentLink.getAmount(), new BigDecimal(MINIMUM_AMOUNT)))
             throw new ValidationException("Payment amount smaller than minimum (" + MINIMUM_AMOUNT + ").");
 
-        if (!ValidationUtils.isDateInFuture(paymentLink.getExpirationDate())) {
+        if (paymentLink.getExpirationDate()!= null && !ValidationUtils.isDateInFuture(paymentLink.getExpirationDate())) {
             throw new ValidationException("Payment link expiration date should be a future date");
         }
     }

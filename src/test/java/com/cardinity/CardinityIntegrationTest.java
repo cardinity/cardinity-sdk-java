@@ -406,6 +406,27 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         assertEquals(todayPlus7Days, result.getItem().getExpirationDate());
     }
 
+    @Test
+    public void testCreateAndUpdatePaymentLink() {
+        PaymentLink paymentLink = new PaymentLink();
+
+        paymentLink.setAmount(new BigDecimal("1.00"));
+        paymentLink.setCurrency("EUR");
+
+        Result<PaymentLink> createResult = client.createPaymentLink(paymentLink);
+        assertTrue(createResult.isValid());
+
+        PaymentLinkUpdate paymentLinkUpdate = new PaymentLinkUpdate();
+        Date todayPlus10Days = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 10));
+        paymentLinkUpdate.setExpirationDate(todayPlus10Days);
+        paymentLinkUpdate.setEnabled(false);
+
+        Result<PaymentLink> updateResult = client.updatePaymentLink(createResult.getItem().getId(), paymentLinkUpdate);
+        assertTrue(updateResult.isValid());
+        assertEquals(todayPlus10Days, updateResult.getItem().getExpirationDate());
+        assertFalse(updateResult.getItem().getEnabled());
+    }
+
     private Payment createApprovedPayment() {
         Payment payment = getBaseCCPayment();
         Result<Payment> initialResult = client.createPayment(payment);
