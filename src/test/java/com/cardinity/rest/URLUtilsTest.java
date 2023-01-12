@@ -69,4 +69,11 @@ public class URLUtilsTest {
         String url = Cardinity.API_BASE + "/v1/paymentLinks";
         assertEquals(url, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS));
     }
+
+    @Test
+    public void testBuildUrlForResourceAndResourceId() {
+        UUID uuid = UUID.randomUUID();
+        String url = Cardinity.API_BASE + "/v1/paymentLinks/" + uuid.toString();
+        assertEquals(url, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS, uuid));
+    }
 }
