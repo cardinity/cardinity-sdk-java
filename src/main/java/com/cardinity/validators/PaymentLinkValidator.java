@@ -25,5 +25,15 @@ public class PaymentLinkValidator implements Validator<PaymentLink> {
         if (paymentLink.getExpirationDate()!= null && !ValidationUtils.isDateInFuture(paymentLink.getExpirationDate())) {
             throw new ValidationException("Payment link expiration date should be a future date");
         }
+
+        if (paymentLink.getOrderId() != null && !ValidationUtils.validateIntervalLength(paymentLink.getOrderId(), 2, 50))
+            throw new ValidationException("Order ID must be between 2 and 50 characters long.");
+
+        if (paymentLink.getDescription() != null && !ValidationUtils.validateIntervalLength(paymentLink.getDescription(), 0,
+                255))
+            throw new ValidationException("Description maximum length 255 characters.");
+
+        if (paymentLink.getCountry() != null && !ValidationUtils.validateExactLength(paymentLink.getCountry(), 2))
+            throw new ValidationException("Country code is mandatory. Should be ISO 3166-1 alpha-2 country code.");
     }
 }
