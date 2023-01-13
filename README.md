@@ -429,7 +429,7 @@ else {
 #### Get a payment link
 
 ```java
-Result<PaymentLink> result = client.updatePaymentLink(existingPaymentLinkId);
+Result<PaymentLink> result = client.getPaymentLink(existingPaymentLinkId);
 
 if (result.isValid()) {
     PaymentLink paymentLink = result.getItem();
