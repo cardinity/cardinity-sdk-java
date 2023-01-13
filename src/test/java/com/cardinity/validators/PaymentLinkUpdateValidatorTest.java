@@ -20,13 +20,19 @@ public class PaymentLinkUpdateValidatorTest {
 
     @Test
     public void testValidateSuccess() {
-       paymentLinkUpdateValidator.validate(paymentLinkUpdate);
+        paymentLinkUpdate.setEnabled(false);
+        paymentLinkUpdateValidator.validate(paymentLinkUpdate);
     }
 
     @Test(expected = ValidationException.class)
     public void testValidateFailWithInvalidExpirationDate() {
         Date todayMinusOneDay = new Date(new Date().getTime() - (1000 * 60 * 60 * 24));
         paymentLinkUpdate.setExpirationDate(todayMinusOneDay);
+        paymentLinkUpdateValidator.validate(paymentLinkUpdate);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void testValidateFailWithAllParametersNull() {
         paymentLinkUpdateValidator.validate(paymentLinkUpdate);
     }
 

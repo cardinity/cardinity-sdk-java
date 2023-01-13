@@ -11,6 +11,9 @@ public class PaymentLinkUpdateValidator implements Validator<PaymentLinkUpdate> 
         if (paymentLinkUpdate == null)
             throw new ValidationException("Missing payment link object.");
 
+        if(paymentLinkUpdate.getEnabled() == null && paymentLinkUpdate.getExpirationDate() == null)
+            throw new ValidationException("At least one parameter should be non-null");
+
         if (paymentLinkUpdate.getExpirationDate()!= null && !ValidationUtils.isDateInFuture(paymentLinkUpdate.getExpirationDate()))
             throw new ValidationException("Payment link expiration date should be a future date");
     }
