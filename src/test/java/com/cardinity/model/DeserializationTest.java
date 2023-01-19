@@ -227,6 +227,23 @@ public class DeserializationTest extends CardinityBaseTest {
     }
 
     @Test
+    public void testDeserializeCreatedPaymentLink() throws IOException, ParseException {
+        String json = resource("payment_link_response.json");
+        PaymentLink paymentLink = RestResource.GSON.fromJson(json, PaymentLink.class);
+
+        assertEquals(UUID.fromString("b6aca927-0a13-4b0f-8d71-d3d140143216"), paymentLink.getId());
+        assertEquals("https://checkout.cardinity.com/link/b6aca927-0a13-4b0f-8d71-d3d140143216", paymentLink.getUrl());
+        assertEquals(new BigDecimal("1.00"), paymentLink.getAmount());
+        assertEquals("EUR", paymentLink.getCurrency());
+        assertEquals("LT", paymentLink.getCountry());
+        assertEquals("My order description", paymentLink.getDescription());
+        assertEquals("00001", paymentLink.getOrderId());
+        assertEquals(formatterWithMillis.parse("2023-01-06T09:05:27.981Z"), paymentLink.getExpirationDate());
+        assertEquals(false, paymentLink.getMultipleUse());
+        assertEquals(true, paymentLink.getEnabled());
+    }
+
+    @Test
     public void testDeserializeRestException() throws IOException {
 
         String json = resource("validation_error.json");

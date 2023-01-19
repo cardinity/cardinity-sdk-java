@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,6 +24,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     private static final String TEST_REFUND_DESCRIPTION = "cardinity-SDK-refund";
     private static final String TEST_SETTLEMENT_DESCRIPTION = "cardinity-SDK-settlement";
     private static final String TEST_VOID_DESCRIPTION = "cardinity-SDK-void";
+    private static final String TEST_PAYMENT_LINK_DESCRIPTION = "cardinity-SDK-paymentLink";
 
     @BeforeClass
     public static void setUpClass() throws Exception {
@@ -383,6 +385,58 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         Result<List<Settlement>> settlements = client.getSettlements(resultPayment.getId());
         assertTrue(settlements.isValid());
         assertEquals(1, settlements.getItem().size());
+    }
+
+    @Test
+    public void testCreatePaymentLink() {
+        Date todayPlus7Days = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 7));
+
+        PaymentLink paymentLink = new PaymentLink();
+        paymentLink.setAmount(new BigDecimal("1.00"));
+        paymentLink.setCurrency("EUR");
+        paymentLink.setCountry("LT");
+        paymentLink.setDescription(TEST_PAYMENT_LINK_DESCRIPTION);
+        paymentLink.setOrderId(TEST_ORDER_ID);
+        paymentLink.setExpirationDate(todayPlus7Days);
+        paymentLink.setMultipleUse(true);
+
+        Result<PaymentLink> result = client.createPaymentLink(paymentLink);
+        assertTrue(result.isValid());
+        assertNotNull(result.getItem().getUrl());
+        assertEquals(todayPlus7Days, result.getItem().getExpirationDate());
+    }
+
+    @Test
+    public void testCreateAndUpdatePaymentLink() {
+        PaymentLink paymentLink = new PaymentLink();
+
+        paymentLink.setAmount(new BigDecimal("1.00"));
+        paymentLink.setCurrency("EUR");
+
+        Result<PaymentLink> createResult = client.createPaymentLink(paymentLink);
+        assertTrue(createResult.isValid());
+
+        PaymentLinkUpdate paymentLinkUpdate = new PaymentLinkUpdate();
+        Date todayPlus10Days = new Date(new Date().getTime() + (1000 * 60 * 60 * 24 * 10));
+        paymentLinkUpdate.setExpirationDate(todayPlus10Days);
+        paymentLinkUpdate.setEnabled(false);
+
+        Result<PaymentLink> updateResult = client.updatePaymentLink(createResult.getItem().getId(), paymentLinkUpdate);
+        assertTrue(updateResult.isValid());
+        assertEquals(todayPlus10Days, updateResult.getItem().getExpirationDate());
+        assertFalse(updateResult.getItem().getEnabled());
+    }
+
+    @Test
+    public void testGetPaymentLink() {
+        PaymentLink paymentLink = new PaymentLink();
+        paymentLink.setAmount(new BigDecimal("1.00"));
+        paymentLink.setCurrency("EUR");
+        Result<PaymentLink> createResult = client.createPaymentLink(paymentLink);
+        assertTrue(createResult.isValid());
+
+        Result<PaymentLink> getResult = client.getPaymentLink(createResult.getItem().getId());
+        assertEquals(getResult.getItem().getId(), createResult.getItem().getId());
     }
 
     private Payment createApprovedPayment() {

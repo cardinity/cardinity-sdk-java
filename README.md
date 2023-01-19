@@ -19,7 +19,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>com.cardinity</groupId>
   <artifactId>cardinity-sdk-java</artifactId>
-  <version>1.2.3</version>
+  <version>1.3.0</version>
 </dependency>
 ```
 
@@ -28,7 +28,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "com.cardinity:cardinity-sdk-java:1.2.3"
+compile "com.cardinity:cardinity-sdk-java:1.3.0"
 ```
 
 ### Other
@@ -385,6 +385,54 @@ Result<List<Chargeback>> result = client.getChargebacks(paymentId);
 
 if (result.isValid()) {
     List<Chargeback> chargebacks = result.getItem();
+}
+else {
+    CardinityError error = result.getCardinityError();
+}
+```
+
+### Payment Link API
+
+#### Create a new payment link
+
+```java
+PaymentLink paymentLink = new PaymentLink();
+paymentLink.setAmount(new BigDecimal("1.00"));
+paymentLink.setCurrency("EUR");
+
+Result<PaymentLink> result = client.createPaymentLink(paymentLink);
+
+if (result.isValid()) {
+    PaymentLink paymentLink = result.getItem();
+}
+else {
+    CardinityError error = result.getCardinityError();
+}
+```
+
+#### Update a payment link
+
+```java
+PaymentLinkUpdate paymentLinkUpdate = new PaymentLinkUpdate();
+paymentLinkUpdate.setEnabled(false);
+
+Result<PaymentLink> result = client.updatePaymentLink(existingPaymentLinkId, paymentLinkUpdate);
+
+if (result.isValid()) {
+    PaymentLink paymentLink = result.getItem();
+}
+else {
+    CardinityError error = result.getCardinityError();
+}
+```
+
+#### Get a payment link
+
+```java
+Result<PaymentLink> result = client.getPaymentLink(existingPaymentLinkId);
+
+if (result.isValid()) {
+    PaymentLink paymentLink = result.getItem();
 }
 else {
     CardinityError error = result.getCardinityError();

@@ -28,7 +28,22 @@ public abstract class RestResource {
     }
 
     public enum Resource {
-        PAYMENTS, REFUNDS, SETTLEMENTS, VOIDS, CHARGEBACKS
+        PAYMENTS("payments"),
+        REFUNDS("refunds"),
+        SETTLEMENTS("settlements"),
+        VOIDS("voids"),
+        CHARGEBACKS("chargebacks"),
+        PAYMENT_LINKS("paymentLinks");
+
+        private final String urlName;
+
+        Resource(String urlName) {
+            this.urlName = urlName;
+        }
+
+        public String getUrlName() {
+            return urlName;
+        }
     }
 
 }

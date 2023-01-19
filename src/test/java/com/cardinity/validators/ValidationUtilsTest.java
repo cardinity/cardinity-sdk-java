@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
+import java.util.Date;
 
 import static org.junit.Assert.*;
 
@@ -56,5 +57,14 @@ public class ValidationUtilsTest {
         assertFalse(ValidationUtils.validateCardNumber("1234123412341234"));
         assertFalse(ValidationUtils.validateCardNumber("-4111111111111111"));
         assertTrue(ValidationUtils.validateCardNumber("4111111111111111"));
+    }
+
+    @Test
+    public void testValidateDateInFuture() {
+        Date todayMinusOneDay = new Date(new Date().getTime() - (1000 * 60 * 60 * 24));
+        assertFalse(ValidationUtils.isDateInFuture(todayMinusOneDay));
+
+        Date todayPlusOneDay = new Date(new Date().getTime() + (1000 * 60 * 60 * 24));
+        assertTrue(ValidationUtils.isDateInFuture(todayPlusOneDay));
     }
 }

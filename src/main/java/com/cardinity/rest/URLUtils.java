@@ -31,24 +31,35 @@ public final class URLUtils {
         return buildCardinityUrl(paymentId, resource, actionID);
     }
 
+    public static String buildUrl(Resource resource) {
+        return buildCardinityUrl(resource, null, null, null);
+    }
+
+    public static String buildUrl(Resource resource, UUID resourceId) {
+        return buildCardinityUrl(resource, resourceId, null, null);
+    }
+
     private static String buildCardinityUrl(UUID paymentId, Resource action, UUID actionId) {
+        return buildCardinityUrl(Resource.PAYMENTS, paymentId, action, actionId);
+    }
 
+    private static String buildCardinityUrl(Resource resource, UUID resourceId, Resource action, UUID actionId) {
         StringBuilder url = new StringBuilder(Cardinity.API_BASE).append(URL_SEPARATOR).append(Cardinity.API_VERSION)
-                .append(URL_SEPARATOR).append(Resource.PAYMENTS);
+                .append(URL_SEPARATOR).append(resource.getUrlName());
 
-        if (paymentId != null) {
+        if (resourceId != null) {
             url.append(URL_SEPARATOR);
-            url.append(paymentId);
+            url.append(resourceId);
             if (action != null) {
                 url.append(URL_SEPARATOR);
-                url.append(action);
+                url.append(action.getUrlName());
                 if (actionId != null) {
                     url.append(URL_SEPARATOR);
                     url.append(actionId);
                 }
             }
         }
-        return url.toString().toLowerCase();
+        return url.toString();
     }
 
     public static String formatURL(String url, String query) {

@@ -63,4 +63,17 @@ public class URLUtilsTest {
         assertEquals("limit=20", URLUtils.buildQueryParam("limit", "20"));
 
     }
+
+    @Test
+    public void testBuildUrlForResource() {
+        String url = Cardinity.API_BASE + "/v1/paymentLinks";
+        assertEquals(url, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS));
+    }
+
+    @Test
+    public void testBuildUrlForResourceAndResourceId() {
+        UUID uuid = UUID.randomUUID();
+        String url = Cardinity.API_BASE + "/v1/paymentLinks/" + uuid.toString();
+        assertEquals(url, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS, uuid));
+    }
 }

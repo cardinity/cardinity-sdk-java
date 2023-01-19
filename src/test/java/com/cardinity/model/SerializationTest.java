@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -72,5 +73,18 @@ public class SerializationTest extends CardinityBaseTest {
         threeds2Data.setCardholderInfo(cardholderInfo);
 
         assertEquals(resource("payment_with_threeds2_data.json"), RestResource.GSON.toJson(payment));
+    }
+
+    @Test
+    public void testSerializePaymentLinkRequest() throws IOException, ParseException {
+        PaymentLink paymentLink = new PaymentLink();
+        paymentLink.setAmount(new BigDecimal("1.00"));
+        paymentLink.setCurrency("EUR");
+        paymentLink.setCountry("LT");
+        paymentLink.setDescription("My order description");
+        paymentLink.setOrderId("00001");
+        paymentLink.setExpirationDate(formatterWithMillis.parse("2023-01-09T11:19:43.119Z"));
+        paymentLink.setMultipleUse(false);
+        assertEquals(resource("payment_link_request.json"), RestResource.GSON.toJson(paymentLink));
     }
 }
