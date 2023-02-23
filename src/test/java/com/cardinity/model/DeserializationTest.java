@@ -237,7 +237,6 @@ public class DeserializationTest extends CardinityBaseTest {
         assertEquals("EUR", paymentLink.getCurrency());
         assertEquals("LT", paymentLink.getCountry());
         assertEquals("My order description", paymentLink.getDescription());
-        assertEquals("00001", paymentLink.getOrderId());
         assertEquals(formatterWithMillis.parse("2023-01-06T09:05:27.981Z"), paymentLink.getExpirationDate());
         assertEquals(false, paymentLink.getMultipleUse());
         assertEquals(true, paymentLink.getEnabled());

@@ -396,7 +396,6 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         paymentLink.setCurrency("EUR");
         paymentLink.setCountry("LT");
         paymentLink.setDescription(TEST_PAYMENT_LINK_DESCRIPTION);
-        paymentLink.setOrderId(TEST_ORDER_ID);
         paymentLink.setExpirationDate(todayPlus7Days);
         paymentLink.setMultipleUse(true);
 
@@ -412,6 +411,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
 
         paymentLink.setAmount(new BigDecimal("1.00"));
         paymentLink.setCurrency("EUR");
+        paymentLink.setDescription("Payment Link Description");
 
         Result<PaymentLink> createResult = client.createPaymentLink(paymentLink);
         assertTrue(createResult.isValid());
@@ -432,6 +432,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         PaymentLink paymentLink = new PaymentLink();
         paymentLink.setAmount(new BigDecimal("1.00"));
         paymentLink.setCurrency("EUR");
+        paymentLink.setDescription("Payment Link Description");
         Result<PaymentLink> createResult = client.createPaymentLink(paymentLink);
         assertTrue(createResult.isValid());
 

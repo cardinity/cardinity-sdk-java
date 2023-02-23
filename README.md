@@ -3,7 +3,7 @@
 
 Java SDK for cardinity payment gateway. Library includes all the functionality provided by API. 
 
-You can signup for cardinity services - https://cardinity.com
+You can sign up for cardinity services - https://cardinity.com
 
 ## Requirements
 
@@ -399,6 +399,7 @@ else {
 PaymentLink paymentLink = new PaymentLink();
 paymentLink.setAmount(new BigDecimal("1.00"));
 paymentLink.setCurrency("EUR");
+paymentLink.setDescription("Product description");
 
 Result<PaymentLink> result = client.createPaymentLink(paymentLink);
 
