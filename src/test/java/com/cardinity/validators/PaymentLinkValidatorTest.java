@@ -19,6 +19,7 @@ public class PaymentLinkValidatorTest {
         paymentLink = new PaymentLink();
         paymentLink.setAmount(new BigDecimal(1.00));
         paymentLink.setCurrency("EUR");
+        paymentLink.setDescription("My order description");
     }
 
     @Test
