@@ -11,7 +11,6 @@ public class PaymentLink {
     private String currency;
     private String country;
     private String description;
-    private String orderId;
     private Date expirationDate;
     private Boolean multipleUse;
     private Boolean enabled;
@@ -54,14 +53,6 @@ public class PaymentLink {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
     }
 
     public Date getExpirationDate() {

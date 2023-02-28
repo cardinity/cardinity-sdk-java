@@ -19,6 +19,7 @@ public class PaymentLinkValidatorTest {
         paymentLink = new PaymentLink();
         paymentLink.setAmount(new BigDecimal(1.00));
         paymentLink.setCurrency("EUR");
+        paymentLink.setDescription("My order description");
     }
 
     @Test
@@ -64,16 +65,18 @@ public class PaymentLinkValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void testValidateFailWithInvalidDescription() {
-        paymentLink.setDescription("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" +
-                "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" +
-                "123456789012345678901234567890123456789012345678901234567890");
+    public void testValidateFailWithoutDescription() {
+        paymentLink.setAmount(new BigDecimal(1.00));
+        paymentLink.setCurrency("EUR");
+        paymentLink.setDescription(null);
         paymentLinkValidator.validate(paymentLink);
     }
 
     @Test(expected = ValidationException.class)
-    public void testValidateFailWithInvalidOrderId() {
-        paymentLink.setOrderId("123456789012345678901234567890123456789012345678901234567890");
+    public void testValidateFailWithInvalidDescription() {
+        paymentLink.setDescription("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" +
+                "1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890" +
+                "123456789012345678901234567890123456789012345678901234567890");
         paymentLinkValidator.validate(paymentLink);
     }
 }

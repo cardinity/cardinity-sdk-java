@@ -82,7 +82,6 @@ public class SerializationTest extends CardinityBaseTest {
         paymentLink.setCurrency("EUR");
         paymentLink.setCountry("LT");
         paymentLink.setDescription("My order description");
-        paymentLink.setOrderId("00001");
         paymentLink.setExpirationDate(formatterWithMillis.parse("2023-01-09T11:19:43.119Z"));
         paymentLink.setMultipleUse(false);
         assertEquals(resource("payment_link_request.json"), RestResource.GSON.toJson(paymentLink));
