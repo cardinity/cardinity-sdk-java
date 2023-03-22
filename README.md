@@ -365,7 +365,7 @@ else {
 
 ### Chargebacks [API](https://developers.cardinity.com/api/v1/#chargebacks)
 
-#### Get existing chargeback
+#### Get specific chargeback of a payment
 
 ```java
 Result<Chargeback> result = client.getChargeback(paymentId, chargebackId);
@@ -378,10 +378,24 @@ else {
 }
 ```
 
-#### Get all chargebacks
+#### Get chargebacks of a payment
 
 ```java
 Result<List<Chargeback>> result = client.getChargebacks(paymentId);
+
+if (result.isValid()) {
+    List<Chargeback> chargebacks = result.getItem();
+}
+else {
+    CardinityError error = result.getCardinityError();
+}
+```
+
+#### Get all latest chargebacks
+
+```java
+int limit = 10;
+Result<List<Chargeback>> result = client.getAllChargebacks(limit);
 
 if (result.isValid()) {
     List<Chargeback> chargebacks = result.getItem();

@@ -440,6 +440,25 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         assertEquals(getResult.getItem().getId(), createResult.getItem().getId());
     }
 
+    @Test
+    public void testGetAllChargebacks() {
+        Result<List<Chargeback>> allChargebacks = client.getAllChargebacks();
+        assertTrue(allChargebacks.isValid());
+        int size = allChargebacks.getItem().size();
+        assertTrue(size >= 1);
+        assertTrue(size <= 10);
+    }
+
+    @Test
+    public void testGetAllChargebacksWithLimit() {
+        int limit = 3;
+        Result<List<Chargeback>> allChargebacks = client.getAllChargebacks(limit);
+        assertTrue(allChargebacks.isValid());
+        int size = allChargebacks.getItem().size();
+        assertTrue(size >= 1);
+        assertTrue(size <= limit);
+    }
+
     private Payment createApprovedPayment() {
         Payment payment = getBaseCCPayment();
         Result<Payment> initialResult = client.createPayment(payment);

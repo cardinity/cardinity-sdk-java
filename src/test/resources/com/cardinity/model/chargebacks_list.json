@@ -1,0 +1,35 @@
+[
+  {
+    "id": "a45b1011-c950-468f-96a1-88bcb68b0bd8",
+    "amount": "10.00",
+    "currency": "EUR",
+    "type": "chargeback",
+    "created": "2023-03-22T09:06:26.681Z",
+    "live": false,
+    "parent_id": "57b8f0d0-ff7a-4917-af8f-63d7ba2f775e",
+    "status": "approved",
+    "description": "First chargeback"
+  },
+  {
+    "id": "9adcf258-702e-4004-81bb-e2ba28b374f7",
+    "amount": "10.00",
+    "currency": "EUR",
+    "type": "chargeback",
+    "created": "2023-03-22T08:25:19.894Z",
+    "live": false,
+    "parent_id": "560e8d32-cc49-4f33-ba3b-d593aa90be54",
+    "status": "approved",
+    "description": "First chargeback"
+  },
+  {
+    "id": "7d2b1985-7b12-48bc-880e-890fd66f17c8",
+    "amount": "10.00",
+    "currency": "EUR",
+    "type": "chargeback",
+    "created": "2023-03-22T08:24:43.356Z",
+    "live": false,
+    "parent_id": "28a27749-75d4-4749-bc94-742c05bd9df2",
+    "status": "approved",
+    "description": "First chargeback"
+  }
+]

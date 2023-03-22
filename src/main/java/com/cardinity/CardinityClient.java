@@ -379,6 +379,34 @@ public class CardinityClient {
                 CHARGEBACK_LIST_TYPE);
     }
 
+    /**
+     * Returns a list of the 10 latest chargebacks for merchant.
+     *
+     * @return a Result wrapper containing a list of Chargeback objects or a CardinityError object.
+     * @throws CardinityException  if internal client error occurs.
+     */
+    public Result<List<Chargeback>> getAllChargebacks() {
+        return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(RestResource.Resource.PAYMENTS, RestResource.Resource.CHARGEBACKS), CHARGEBACK_LIST_TYPE);
+    }
+
+    /**
+     * Returns a list of the latest chargebacks for merchant.
+     *
+     * @param limit number of last payment to be returned. Value must be between 1 and 100.
+     * @return a Result wrapper containing a list of Chargeback objects or a CardinityError object.
+     * @throws ValidationException if limit is less than 1 or larger than 100.
+     * @throws CardinityException  if internal client error occurs.
+     */
+    public Result<List<Chargeback>> getAllChargebacks(int limit) {
+
+        if (!ValidationUtils.validateInteger(limit, 1, 100))
+            throw new ValidationException("Limit must be a positive value between 1 and 100");
+
+        Map<String, String> params = new HashMap<String, String>();
+        params.put("limit", String.valueOf(limit));
+        return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(RestResource.Resource.PAYMENTS, RestResource.Resource.CHARGEBACKS), CHARGEBACK_LIST_TYPE, params);
+    }
+
     public Result<PaymentLink> createPaymentLink(PaymentLink paymentLink) {
         paymentLinkValidator.validate(paymentLink);
         return restClient.sendRequest(RequestMethod.POST, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS), PAYMENT_LINK_TYPE, paymentLink);
