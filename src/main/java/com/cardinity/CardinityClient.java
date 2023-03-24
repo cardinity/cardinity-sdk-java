@@ -386,7 +386,7 @@ public class CardinityClient {
      * @throws CardinityException  if internal client error occurs.
      */
     public Result<List<Chargeback>> getAllChargebacks() {
-        return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(RestResource.Resource.PAYMENTS, RestResource.Resource.CHARGEBACKS), CHARGEBACK_LIST_TYPE);
+        return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(null, RestResource.Resource.CHARGEBACKS), CHARGEBACK_LIST_TYPE);
     }
 
     /**
@@ -404,7 +404,7 @@ public class CardinityClient {
 
         Map<String, String> params = new HashMap<String, String>();
         params.put("limit", String.valueOf(limit));
-        return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(RestResource.Resource.PAYMENTS, RestResource.Resource.CHARGEBACKS), CHARGEBACK_LIST_TYPE, params);
+        return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(null, RestResource.Resource.CHARGEBACKS), CHARGEBACK_LIST_TYPE, params);
     }
 
     public Result<PaymentLink> createPaymentLink(PaymentLink paymentLink) {
