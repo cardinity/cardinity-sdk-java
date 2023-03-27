@@ -3,11 +3,15 @@ package com.cardinity.model;
 import com.cardinity.CardinityBaseTest;
 import com.cardinity.exceptions.CardinityException;
 import com.cardinity.rest.RestResource;
+import com.google.gson.reflect.TypeToken;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.Assert.*;
@@ -240,6 +244,45 @@ public class DeserializationTest extends CardinityBaseTest {
         assertEquals(formatterWithMillis.parse("2023-01-06T09:05:27.981Z"), paymentLink.getExpirationDate());
         assertEquals(false, paymentLink.getMultipleUse());
         assertEquals(true, paymentLink.getEnabled());
+    }
+
+    @Test
+    public void testDeserializeChargebackList() throws IOException, ParseException {
+        String json = resource("chargebacks_list.json");
+        Type listType = new TypeToken<ArrayList<Chargeback>>(){}.getType();
+        List<Chargeback> chargebacks = RestResource.GSON.fromJson(json, listType);
+
+        assertEquals(3, chargebacks.size());
+
+        Chargeback chargeback1 = chargebacks.get(0);
+        assertEquals(UUID.fromString("a45b1011-c950-468f-96a1-88bcb68b0bd8"), chargeback1.getId());
+        assertEquals(new BigDecimal("10.00"), chargeback1.getAmount());
+        assertEquals("EUR", chargeback1.getCurrency());
+        assertEquals(formatterWithMillis.parse("2023-03-22T09:06:26.681Z"), chargeback1.getCreated());
+        assertEquals(false, chargeback1.getLive());
+        assertEquals(UUID.fromString("57b8f0d0-ff7a-4917-af8f-63d7ba2f775e"), chargeback1.getParentId());
+        assertEquals(Chargeback.Status.APPROVED, chargeback1.getStatus());
+        assertEquals("First chargeback", chargeback1.getDescription());
+
+        Chargeback chargeback2 = chargebacks.get(1);
+        assertEquals(UUID.fromString("9adcf258-702e-4004-81bb-e2ba28b374f7"), chargeback2.getId());
+        assertEquals(new BigDecimal("10.00"), chargeback2.getAmount());
+        assertEquals("EUR", chargeback2.getCurrency());
+        assertEquals(formatterWithMillis.parse("2023-03-22T08:25:19.894Z"), chargeback2.getCreated());
+        assertEquals(false, chargeback2.getLive());
+        assertEquals(UUID.fromString("560e8d32-cc49-4f33-ba3b-d593aa90be54"), chargeback2.getParentId());
+        assertEquals(Chargeback.Status.APPROVED, chargeback2.getStatus());
+        assertEquals("First chargeback", chargeback2.getDescription());
+
+        Chargeback chargeback3 = chargebacks.get(2);
+        assertEquals(UUID.fromString("7d2b1985-7b12-48bc-880e-890fd66f17c8"), chargeback3.getId());
+        assertEquals(new BigDecimal("10.00"), chargeback3.getAmount());
+        assertEquals("EUR", chargeback3.getCurrency());
+        assertEquals(formatterWithMillis.parse("2023-03-22T08:24:43.356Z"), chargeback3.getCreated());
+        assertEquals(false, chargeback3.getLive());
+        assertEquals(UUID.fromString("28a27749-75d4-4749-bc94-742c05bd9df2"), chargeback3.getParentId());
+        assertEquals(Chargeback.Status.APPROVED, chargeback3.getStatus());
+        assertEquals("First chargeback", chargeback3.getDescription());
     }
 
     @Test

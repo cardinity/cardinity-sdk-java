@@ -39,6 +39,10 @@ public final class URLUtils {
         return buildCardinityUrl(resource, resourceId, null, null);
     }
 
+    public static String buildUrl(Resource resource, Resource action) {
+        return buildCardinityUrl(resource, null, action, null);
+    }
+
     private static String buildCardinityUrl(UUID paymentId, Resource action, UUID actionId) {
         return buildCardinityUrl(Resource.PAYMENTS, paymentId, action, actionId);
     }
@@ -50,13 +54,13 @@ public final class URLUtils {
         if (resourceId != null) {
             url.append(URL_SEPARATOR);
             url.append(resourceId);
-            if (action != null) {
+        }
+        if (action != null) {
+            url.append(URL_SEPARATOR);
+            url.append(action.getUrlName());
+            if (actionId != null) {
                 url.append(URL_SEPARATOR);
-                url.append(action.getUrlName());
-                if (actionId != null) {
-                    url.append(URL_SEPARATOR);
-                    url.append(actionId);
-                }
+                url.append(actionId);
             }
         }
         return url.toString();
