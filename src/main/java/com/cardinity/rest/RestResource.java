@@ -24,7 +24,7 @@ public abstract class RestResource {
 
 
     public enum RequestMethod {
-        GET, PATCH, POST
+        GET, PATCH, POST, DELETE
     }
 
     public enum Resource {

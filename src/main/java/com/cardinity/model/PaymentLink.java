@@ -14,6 +14,7 @@ public class PaymentLink {
     private Date expirationDate;
     private Boolean multipleUse;
     private Boolean enabled;
+    private Boolean deleted;
 
     public UUID getId() {
         return id;
@@ -73,5 +74,9 @@ public class PaymentLink {
 
     public Boolean getEnabled() {
         return enabled;
+    }
+
+    public Boolean getDeleted() {
+        return Boolean.TRUE.equals(deleted);
     }
 }
