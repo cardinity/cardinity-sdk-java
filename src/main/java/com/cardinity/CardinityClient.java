@@ -418,6 +418,10 @@ public class CardinityClient {
                 paymentLinkUpdate);
     }
 
+    public Result<PaymentLink> deletePaymentLink(UUID paymentLinkId) {
+        return restClient.sendRequest(RequestMethod.DELETE, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS, paymentLinkId), PAYMENT_LINK_TYPE);
+    }
+
     public Result<PaymentLink> getPaymentLink(UUID paymentLinkId) {
         return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS, paymentLinkId), PAYMENT_LINK_TYPE);
     }

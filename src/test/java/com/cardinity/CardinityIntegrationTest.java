@@ -428,6 +428,23 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     }
 
     @Test
+    public void testCreateAndDeletePaymentLink() {
+        PaymentLink paymentLink = new PaymentLink();
+
+        paymentLink.setAmount(new BigDecimal("1.00"));
+        paymentLink.setCurrency("EUR");
+        paymentLink.setDescription("Payment Link Description");
+
+        Result<PaymentLink> createResult = client.createPaymentLink(paymentLink);
+        assertTrue(createResult.isValid());
+
+        Result<PaymentLink> deleteResult = client.deletePaymentLink(createResult.getItem().getId());
+        assertTrue(deleteResult.isValid());
+        assertEquals(createResult.getItem().getId(), deleteResult.getItem().getId());
+        assertTrue(deleteResult.getItem().getDeleted());
+    }
+
+    @Test
     public void testGetPaymentLink() {
         PaymentLink paymentLink = new PaymentLink();
         paymentLink.setAmount(new BigDecimal("1.00"));

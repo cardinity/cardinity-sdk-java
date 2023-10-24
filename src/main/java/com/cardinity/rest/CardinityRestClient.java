@@ -83,6 +83,10 @@ public class CardinityRestClient implements RestClient {
                     conn = createPostPatchConnection(url, buildRequestBody(requestObject), false, oAuthProvider
                             .buildAuthorizationHeader(method, url));
                     break;
+                case DELETE:
+                    conn = createDeleteConnection(url, params, oAuthProvider.buildAuthorizationHeader(method, url,
+                            params));
+                    break;
                 default:
                     throw new CardinityClientException("Unrecognized HTTP request type.");
             }
@@ -142,6 +146,16 @@ public class CardinityRestClient implements RestClient {
                 output.close();
             }
         }
+        return conn;
+    }
+
+    private static HttpURLConnection createDeleteConnection(String url, Map<String, String> params, String
+            authorizationHeader) throws IOException {
+        String deleteUrl = createUrl(url, params);
+        HttpURLConnection conn = createConnection(deleteUrl);
+        conn.setRequestMethod("DELETE");
+        conn.setRequestProperty("Authorization", authorizationHeader);
+
         return conn;
     }
 
