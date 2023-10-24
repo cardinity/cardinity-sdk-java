@@ -151,8 +151,8 @@ public class CardinityRestClient implements RestClient {
 
     private static HttpURLConnection createDeleteConnection(String url, Map<String, String> params, String
             authorizationHeader) throws IOException {
-        String getURL = createUrl(url, params);
-        HttpURLConnection conn = createConnection(getURL);
+        String deleteUrl = createUrl(url, params);
+        HttpURLConnection conn = createConnection(deleteUrl);
         conn.setRequestMethod("DELETE");
         conn.setRequestProperty("Authorization", authorizationHeader);
 
