@@ -58,7 +58,7 @@ public class DeserializationTest extends CardinityBaseTest {
         assertEquals(Payment.Type.AUTHORIZATION, payment.getType());
         assertEquals(Payment.Status.DECLINED, payment.getStatus());
         assertEquals("3000: Do not Honor", payment.getError());
-        assertEquals("03", payment.getMerchantAdviceCode());
+        assertEquals("03: Do not try again", payment.getMerchantAdviceCode());
         assertEquals("12345678", payment.getOrderId());
         assertEquals("some description", payment.getDescription());
         assertEquals("LT", payment.getCountry());

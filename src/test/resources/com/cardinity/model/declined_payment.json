@@ -7,7 +7,7 @@
   "live": false,
   "status": "declined",
   "error": "3000: Do not Honor",
-  "merchant_advice_code": "03",
+  "merchant_advice_code": "03: Do not try again",
   "country": "LT",
   "order_id": "12345678",
   "description": "some description",
