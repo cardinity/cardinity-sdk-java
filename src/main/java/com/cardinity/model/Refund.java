@@ -36,7 +36,9 @@ public class Refund {
         @SerializedName("approved")
         APPROVED("approved"),
         @SerializedName("declined")
-        DECLINED("declined");
+        DECLINED("declined"),
+        @SerializedName("processing")
+        PROCESSING("processing");
 
         private final String value;
 
