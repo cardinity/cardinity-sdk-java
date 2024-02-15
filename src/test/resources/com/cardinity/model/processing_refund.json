@@ -1,0 +1,11 @@
+{
+  "id": "06dd7703-e19c-421a-af0a-044dbe414272",
+  "amount": "0.50",
+  "currency": "EUR",
+  "type": "refund",
+  "created": "2024-02-15T10:21:12Z",
+  "live": false,
+  "parent_id": "ae6c3357-19f4-49d7-b04b-c20388a11356",
+  "status": "processing",
+  "order_id": "123456"
+}

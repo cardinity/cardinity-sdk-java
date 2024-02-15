@@ -40,7 +40,9 @@ public class Payment {
         @SerializedName("declined")
         DECLINED("declined"),
         @SerializedName("pending")
-        PENDING("pending");
+        PENDING("pending"),
+        @SerializedName("processing")
+        PROCESSING("processing");
 
         private final String value;
 

@@ -75,6 +75,33 @@ public class DeserializationTest extends CardinityBaseTest {
     }
 
     @Test
+    public void testDeserializeProcessingPayment() throws IOException, ParseException {
+        String json = resource("processing_payment.json");
+        Payment payment = RestResource.GSON.fromJson(json, Payment.class);
+
+        assertEquals(UUID.fromString("ae6c3357-19f4-49d7-b04b-c20388a11356"), payment.getId());
+        assertEquals("EUR", payment.getCurrency());
+        assertEquals(new BigDecimal("0.50"), payment.getAmount());
+        assertEquals(formatterWithMillis.parse("2024-02-15T09:30:51.392Z"), payment.getCreated());
+        assertFalse(payment.getLive());
+        assertEquals(Payment.Type.AUTHORIZATION, payment.getType());
+        assertEquals(Payment.Status.PROCESSING, payment.getStatus());
+        assertEquals("123456", payment.getOrderId());
+        assertEquals("some description", payment.getDescription());
+        assertEquals("LT", payment.getCountry());
+        assertEquals(Payment.Method.CARD, payment.getPaymentMethod());
+        assertNotNull(payment.getPaymentInstrument());
+        assertEquals(Payment.Method.CARD, payment.getPaymentInstrument().getType());
+
+        Card card = (Card) payment.getPaymentInstrument();
+        assertEquals("1111", card.getPan());
+        assertEquals("Mike Dough", card.getHolder());
+        assertEquals("Visa", card.getCardBrand());
+        assertEquals(Integer.valueOf(2016), card.getExpYear());
+        assertEquals(Integer.valueOf(12), card.getExpMonth());
+    }
+
+    @Test
     public void testDeserializePendingPaymentFlowV1() throws IOException, ParseException {
         String json = resource("pending_payment_v1.json");
         Payment payment = RestResource.GSON.fromJson(json, Payment.class);
@@ -171,6 +198,21 @@ public class DeserializationTest extends CardinityBaseTest {
         assertEquals(formatter.parse("2015-01-16T09:05:27Z"), refund.getCreated());
         assertFalse(refund.getLive());
         assertEquals(UUID.fromString("f02862aa-5dcc-4637-9ddf-b9140c2b4b06"), refund.getParentId());
+    }
+
+    @Test
+    public void testDeserializeProcessingRefund() throws IOException, ParseException {
+        String json = resource("processing_refund.json");
+        Refund refund = RestResource.GSON.fromJson(json, Refund.class);
+
+        assertEquals(Refund.Status.PROCESSING, refund.getStatus());
+        assertEquals("123456", refund.getOrderId());
+        assertEquals(UUID.fromString("06dd7703-e19c-421a-af0a-044dbe414272"), refund.getId());
+        assertEquals("EUR", refund.getCurrency());
+        assertEquals(new BigDecimal("0.50"), refund.getAmount());
+        assertEquals(formatter.parse("2024-02-15T10:21:12Z"), refund.getCreated());
+        assertFalse(refund.getLive());
+        assertEquals(UUID.fromString("ae6c3357-19f4-49d7-b04b-c20388a11356"), refund.getParentId());
     }
 
     @Test

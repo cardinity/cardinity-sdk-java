@@ -12,6 +12,7 @@ public class EnumTest {
         assertEquals("approved", Payment.Status.APPROVED.getValue());
         assertEquals("declined", Payment.Status.DECLINED.getValue());
         assertEquals("pending", Payment.Status.PENDING.getValue());
+        assertEquals("processing", Payment.Status.PROCESSING.getValue());
 
         assertEquals("recurring", Payment.Method.RECURRING.getValue());
         assertEquals("card", Payment.Method.CARD.getValue());
@@ -25,6 +26,7 @@ public class EnumTest {
 
         assertEquals("approved", Refund.Status.APPROVED.getValue());
         assertEquals("declined", Refund.Status.DECLINED.getValue());
+        assertEquals("processing", Refund.Status.PROCESSING.getValue());
     }
 
     @Test
