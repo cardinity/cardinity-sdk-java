@@ -24,6 +24,7 @@ public class Payment {
     private Boolean settle;
     private Status status;
     private String error;
+    private String threedsStatusReason;
     private String merchantAdviceCode;
     private String country;
     private String orderId;
@@ -160,6 +161,10 @@ public class Payment {
 
     public String getError() {
         return error;
+    }
+
+    public String getThreedsStatusReason() {
+        return threedsStatusReason;
     }
 
     public String getMerchantAdviceCode() {
