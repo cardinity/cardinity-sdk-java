@@ -33,7 +33,8 @@ public abstract class RestResource {
         SETTLEMENTS("settlements"),
         VOIDS("voids"),
         CHARGEBACKS("chargebacks"),
-        PAYMENT_LINKS("paymentLinks");
+        PAYMENT_LINKS("paymentLinks"),
+        RDRS("rdrs");
 
         private final String urlName;
 

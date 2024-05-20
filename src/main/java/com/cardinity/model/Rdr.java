@@ -7,7 +7,7 @@ import java.math.RoundingMode;
 import java.util.Date;
 import java.util.UUID;
 
-public class Chargeback {
+public class Rdr {
 
     private UUID id;
     private BigDecimal amount;

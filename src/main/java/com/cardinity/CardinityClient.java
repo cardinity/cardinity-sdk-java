@@ -38,6 +38,8 @@ public class CardinityClient {
     };
     private final static TypeToken<List<Chargeback>> CHARGEBACK_LIST_TYPE = new TypeToken<List<Chargeback>>() {
     };
+    private final static TypeToken<Rdr> RDR_TYPE = new TypeToken<Rdr>() {
+    };
     private final static TypeToken<PaymentLink> PAYMENT_LINK_TYPE = new TypeToken<PaymentLink>() {
     };
 
@@ -48,6 +50,7 @@ public class CardinityClient {
     private final static Validator<Chargeback> chargebackValidator = new ChargebackValidator();
     private final static Validator<PaymentLink> paymentLinkValidator = new PaymentLinkValidator();
     private final static Validator<PaymentLinkUpdate> paymentLinkUpdateValidator = new PaymentLinkUpdateValidator();
+    private final static Validator<Rdr> rdrValidator = new RdrValidator();
 
     private final RestClient restClient;
 
@@ -426,4 +429,42 @@ public class CardinityClient {
         return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(RestResource.Resource.PAYMENT_LINKS, paymentLinkId), PAYMENT_LINK_TYPE);
     }
 
+
+    /**
+     * Finds and returns a chargeback specified by a paymentId and a rdrId.
+     *
+     * @param paymentId id of payment which was RDRed.
+     * @param rdrId     id of a RDR to be found.
+     * @return a Result wrapper containing either a found RDR object or a CardinityError object.
+     * @throws ValidationException if paymentId or chargebackId are null.
+     * @throws CardinityException  if internal client error occurs.
+     */
+    public Result<Rdr> getRdr(UUID paymentId, UUID rdrId) {
+
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
+
+        if (rdrId == null) throw new ValidationException("chargebackId must be not null.");
+
+        return restClient.sendRequest(RequestMethod.GET, URLUtils.buildUrl(paymentId, RestResource.Resource.RDRS,
+                rdrId), RDR_TYPE);
+    }
+
+    /**
+     * Creates a new RDR.
+     *
+     * @param paymentId id of a payment to be RDRed.
+     * @param rdr       Chargeback object.
+     * @return a Result wrapper containing either a result RDR object or a CardinityError object.
+     * @throws ValidationException if RDR object contains validation errors or paymentId is null.
+     * @throws CardinityException  if internal client error occurs.
+     */
+    public Result<Rdr> createRdr(UUID paymentId, Rdr rdr) {
+
+        if (paymentId == null) throw new ValidationException(MESSAGE_PAYMENT_ID_MISSING);
+
+        rdrValidator.validate(rdr);
+
+        return restClient.sendRequest(RequestMethod.POST, URLUtils.buildUrl(paymentId, RestResource.Resource.RDRS)
+                , RDR_TYPE, rdr);
+    }
 }
