@@ -1,0 +1,13 @@
+[
+  {
+    "id": "aea1ea56-58b2-42ae-ae86-b2830cba763c",
+    "amount": "0.50",
+    "currency": "EUR",
+    "type": "rdr",
+    "created": "2024-05-21T12:54:19.896Z",
+    "live": false,
+    "parent_id": "20318f2b-0255-4d58-b10e-096f446da660",
+    "status": "approved",
+    "reason": "123: 456"
+  }
+]
