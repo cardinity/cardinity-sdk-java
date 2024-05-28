@@ -330,6 +330,24 @@ public class DeserializationTest extends CardinityBaseTest {
     }
 
     @Test
+    public void testDeserializeRdrList() throws IOException, ParseException {
+        String json = resource("rdrs_list.json");
+        Type listType = new TypeToken<ArrayList<Rdr>>(){}.getType();
+        List<Rdr> rdrs = RestResource.GSON.fromJson(json, listType);
+
+        assertEquals(1, rdrs.size());
+
+        Rdr rdr1 = rdrs.get(0);
+        assertEquals(UUID.fromString("aea1ea56-58b2-42ae-ae86-b2830cba763c"), rdr1.getId());
+        assertEquals(new BigDecimal("0.50"), rdr1.getAmount());
+        assertEquals("EUR", rdr1.getCurrency());
+        assertEquals(formatterWithMillis.parse("2024-05-21T12:54:19.896Z"), rdr1.getCreated());
+        assertEquals(false, rdr1.getLive());
+        assertEquals(UUID.fromString("20318f2b-0255-4d58-b10e-096f446da660"), rdr1.getParentId());
+        assertEquals(Rdr.Status.APPROVED, rdr1.getStatus());
+    }
+
+    @Test
     public void testDeserializeRestException() throws IOException {
 
         String json = resource("validation_error.json");
