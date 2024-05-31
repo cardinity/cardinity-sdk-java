@@ -86,4 +86,16 @@ public class SerializationTest extends CardinityBaseTest {
         paymentLink.setMultipleUse(false);
         assertEquals(resource("payment_link_request.json"), RestResource.GSON.toJson(paymentLink));
     }
+
+    @Test
+    public void testSerializeRdrRequest() throws IOException {
+        Rdr rdr = new Rdr();
+        rdr.setArn("123");
+        rdr.setReasonCode("456");
+        rdr.setReasonMessage("789");
+        rdr.setPaymentMethod("card");
+        rdr.setCaseId("asd");
+        rdr.setDescription("fgh");
+        assertEquals(resource("rdr_request.json"), RestResource.GSON.toJson(rdr));
+    }
 }
