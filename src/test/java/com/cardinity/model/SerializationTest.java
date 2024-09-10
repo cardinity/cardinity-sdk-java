@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.ParseException;
 
 import static org.junit.Assert.assertEquals;
@@ -14,7 +15,7 @@ public class SerializationTest extends CardinityBaseTest {
     @Test
     public void testSerializePaymentWithThreeds2Data() throws IOException {
         Payment payment = new Payment();
-        payment.setAmount(new BigDecimal(20));
+        payment.setAmount(new BigDecimal(20).setScale(2, RoundingMode.HALF_EVEN));
         payment.setCurrency("EUR");
         payment.setCountry("LT");
         payment.setSettle(true);

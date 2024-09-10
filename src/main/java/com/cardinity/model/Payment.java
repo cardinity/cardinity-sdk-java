@@ -103,7 +103,7 @@ public class Payment {
     }
 
     public void setAmount(BigDecimal amount) {
-        this.amount = amount.setScale(2, BigDecimal.ROUND_DOWN);
+        this.amount = amount;
     }
 
     public String getCurrency() {

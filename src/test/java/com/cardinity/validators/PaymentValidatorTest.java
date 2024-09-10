@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 public class PaymentValidatorTest {
@@ -18,7 +19,7 @@ public class PaymentValidatorTest {
     @Before
     public void setUp() {
         payment = new Payment();
-        payment.setAmount(BigDecimal.ONE);
+        payment.setAmount(BigDecimal.ONE.setScale(2, RoundingMode.HALF_EVEN));
         payment.setCountry("LT");
         payment.setCurrency("EUR");
         payment.setSettle(true);
@@ -56,7 +57,7 @@ public class PaymentValidatorTest {
 
     @Test(expected = ValidationException.class)
     public void testValidateWrongAmount() throws Exception {
-        payment.setAmount(BigDecimal.ZERO);
+        payment.setAmount(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN));
         paymentValidator.validate(payment);
     }
 

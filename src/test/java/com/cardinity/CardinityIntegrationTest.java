@@ -6,6 +6,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +38,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     private static Payment getBaseCCPayment() {
         Payment payment = new Payment();
         payment.setCountry("LT");
-        payment.setAmount(new BigDecimal(10));
+        payment.setAmount(new BigDecimal(10).setScale(2, RoundingMode.HALF_EVEN));
         payment.setCurrency("EUR");
         payment.setDescription(TEST_PAYMENT_DESCRIPTION);
         payment.setPaymentMethod(Payment.Method.CARD);
@@ -48,6 +49,13 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         card.setExpMonth(1);
         card.setHolder("Cardinity Cardinity");
         payment.setPaymentInstrument(card);
+        return payment;
+    }
+
+    private static Payment getBaseCCPayment(String currency, BigDecimal amount) {
+        Payment payment = getBaseCCPayment();
+        payment.setAmount(amount);
+        payment.setCurrency(currency);
         return payment;
     }
 
@@ -109,7 +117,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     @Test
     public void testCreateDeclinedPayment() {
         Payment payment = getBaseCCPayment();
-        payment.setAmount(new BigDecimal(160));
+        payment.setAmount(new BigDecimal(160).setScale(2, RoundingMode.HALF_EVEN));
         Result<Payment> result = client.createPayment(payment);
         assertTrue(result.isValid());
 
@@ -157,7 +165,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     public void testCreateApprovedRecurringPayment() {
         Payment initialResultPayment = createApprovedPayment();
         Payment payment = getBaseCCPayment();
-        payment.setAmount(new BigDecimal(20));
+        payment.setAmount(new BigDecimal(20).setScale(2, RoundingMode.HALF_EVEN));
         payment.setPaymentMethod(Payment.Method.RECURRING);
         Recurring recurringPayment = new Recurring();
         recurringPayment.setPaymentId(initialResultPayment.getId());
@@ -171,7 +179,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     public void testCreateDeclinedRecurringPayment() {
         Payment initialResultPayment = createApprovedPayment();
         Payment payment = getBaseCCPayment();
-        payment.setAmount(new BigDecimal(160));
+        payment.setAmount(new BigDecimal(160).setScale(2, RoundingMode.HALF_EVEN));
         payment.setPaymentMethod(Payment.Method.RECURRING);
         Recurring recurringPayment = new Recurring();
         recurringPayment.setPaymentId(initialResultPayment.getId());
@@ -476,8 +484,50 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         assertTrue(size <= limit);
     }
 
+    @Test
+    public void testCreateApprovedPaymentNoDecimal() {
+        Payment resultPayment = createApprovedPaymentJPY();
+        assertEquals(APPROVED, resultPayment.getStatus());
+        assertNotNull(resultPayment.getId());
+        assertThat(resultPayment.getPaymentInstrument(), instanceOf(Card.class));
+        assertFalse(resultPayment.getLive());
+        assertEquals(TEST_PAYMENT_DESCRIPTION, resultPayment.getDescription());
+        assertFalse(resultPayment.isThreedsV2());
+        assertFalse(resultPayment.isThreedsV1());
+    }
+
+    @Test
+    public void testCreateApprovedPaymentMoreDecimal() {
+        Payment resultPayment = createApprovedPaymentKWD();
+        assertEquals(APPROVED, resultPayment.getStatus());
+        assertNotNull(resultPayment.getId());
+        assertThat(resultPayment.getPaymentInstrument(), instanceOf(Card.class));
+        assertFalse(resultPayment.getLive());
+        assertEquals(TEST_PAYMENT_DESCRIPTION, resultPayment.getDescription());
+        assertFalse(resultPayment.isThreedsV2());
+        assertFalse(resultPayment.isThreedsV1());
+    }
+
     private Payment createApprovedPayment() {
         Payment payment = getBaseCCPayment();
+        Result<Payment> initialResult = client.createPayment(payment);
+        assertTrue(initialResult.isValid());
+        Payment resultPayment = initialResult.getItem();
+        assertEquals(APPROVED, resultPayment.getStatus());
+        return resultPayment;
+    }
+
+    private Payment createApprovedPaymentJPY() {
+        Payment payment = getBaseCCPayment("JPY", BigDecimal.valueOf(10).setScale(0, RoundingMode.HALF_EVEN));
+        Result<Payment> initialResult = client.createPayment(payment);
+        assertTrue(initialResult.isValid());
+        Payment resultPayment = initialResult.getItem();
+        assertEquals(APPROVED, resultPayment.getStatus());
+        return resultPayment;
+    }
+
+    private Payment createApprovedPaymentKWD() {
+        Payment payment = getBaseCCPayment("KWD", BigDecimal.valueOf(10.000).setScale(3, RoundingMode.HALF_EVEN));
         Result<Payment> initialResult = client.createPayment(payment);
         assertTrue(initialResult.isValid());
         Payment resultPayment = initialResult.getItem();
