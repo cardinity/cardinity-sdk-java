@@ -19,6 +19,7 @@ import static org.junit.Assert.*;
 public class CardinityIntegrationTest extends CardinityBaseTest {
 
     private static CardinityClient client;
+    private static CardinityClient passthroughClient;
 
     private static final String TEST_ORDER_ID = "cardinity-SDK-test";
     private static final String TEST_PAYMENT_DESCRIPTION = "cardinity-SDK-payment";
@@ -33,6 +34,11 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         final String consumerSecret = System.getenv("CRD_SECRET");
         if (consumerKey == null || consumerSecret == null) throw new Exception("Authorization keys missing");
         client = new CardinityClient(consumerKey, consumerSecret);
+
+        final String passthroughConsumerKey = System.getenv("PASSTHROUGH_CRD_KEY");
+        final String passthroughConsumerSecret = System.getenv("PASSTHROUGH_CRD_SECRET");
+        if (passthroughConsumerKey == null || passthroughConsumerSecret == null) throw new Exception("Authorization keys missing");
+        passthroughClient = new CardinityClient(passthroughConsumerKey, passthroughConsumerSecret);
     }
 
     private static Payment getBaseCCPayment() {
@@ -519,7 +525,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
 
     private Payment createApprovedPaymentJPY() {
         Payment payment = getBaseCCPayment("JPY", BigDecimal.valueOf(10).setScale(0, RoundingMode.HALF_EVEN));
-        Result<Payment> initialResult = client.createPayment(payment);
+        Result<Payment> initialResult = passthroughClient.createPayment(payment);
         assertTrue(initialResult.isValid());
         Payment resultPayment = initialResult.getItem();
         assertEquals(APPROVED, resultPayment.getStatus());
@@ -528,7 +534,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
 
     private Payment createApprovedPaymentKWD() {
         Payment payment = getBaseCCPayment("KWD", BigDecimal.valueOf(10.000).setScale(3, RoundingMode.HALF_EVEN));
-        Result<Payment> initialResult = client.createPayment(payment);
+        Result<Payment> initialResult = passthroughClient.createPayment(payment);
         assertTrue(initialResult.isValid());
         Payment resultPayment = initialResult.getItem();
         assertEquals(APPROVED, resultPayment.getStatus());
