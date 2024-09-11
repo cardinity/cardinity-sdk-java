@@ -25,4 +25,6 @@ jobs:
       env:
         CRD_KEY: ${{secrets.CRD_KEY}}
         CRD_SECRET: ${{secrets.CRD_SECRET}}
+        CRD_PASSTHROUGH_KEY: ${{secrets.CRD_PASSTHROUGH_KEY}}
+        CRD_PASSTHROUGH_SECRET: ${{secrets.CRD_PASSTHROUGH_SECRET}}
       run: mvn clean verify -Dgpg.skip=true
