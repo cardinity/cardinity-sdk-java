@@ -35,8 +35,8 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         if (consumerKey == null || consumerSecret == null) throw new Exception("Authorization keys missing");
         client = new CardinityClient(consumerKey, consumerSecret);
 
-        final String passthroughConsumerKey = System.getenv("PASSTHROUGH_CRD_KEY");
-        final String passthroughConsumerSecret = System.getenv("PASSTHROUGH_CRD_SECRET");
+        final String passthroughConsumerKey = System.getenv("CRD_PASSTHROUGH_KEY");
+        final String passthroughConsumerSecret = System.getenv("CRD_PASSTHROUGH_SECRET");
         if (passthroughConsumerKey == null || passthroughConsumerSecret == null) throw new Exception("Authorization keys missing");
         passthroughClient = new CardinityClient(passthroughConsumerKey, passthroughConsumerSecret);
     }
