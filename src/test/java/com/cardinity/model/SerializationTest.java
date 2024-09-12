@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.ParseException;
 
 import static org.junit.Assert.assertEquals;
