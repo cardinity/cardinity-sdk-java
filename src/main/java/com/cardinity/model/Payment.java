@@ -107,7 +107,12 @@ public class Payment {
 
     public void setAmount(BigDecimal amount) {
         if (currency != null) {
-            this.amount = amount.setScale(Currency.getInstance(currency).getDefaultFractionDigits(), RoundingMode.DOWN);
+            try {
+                Currency currencyInstance = Currency.getInstance(currency);
+                if (amount != null) {
+                    this.amount = amount.setScale(currencyInstance.getDefaultFractionDigits(), RoundingMode.DOWN);
+                }
+            } catch (IllegalArgumentException ignored){}
         } else {
             this.amount = amount;
         }
