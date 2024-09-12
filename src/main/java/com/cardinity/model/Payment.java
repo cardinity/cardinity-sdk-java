@@ -1,8 +1,11 @@
 package com.cardinity.model;
 
+import com.cardinity.exceptions.ValidationException;
 import com.google.gson.annotations.SerializedName;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Currency;
 import java.util.Date;
 import java.util.UUID;
 
@@ -103,7 +106,15 @@ public class Payment {
     }
 
     public void setAmount(BigDecimal amount) {
-        this.amount = amount.setScale(2, BigDecimal.ROUND_DOWN);
+        if (currency != null) {
+            try {
+                if (amount != null) {
+                    this.amount = amount.setScale(Currency.getInstance(currency).getDefaultFractionDigits(), RoundingMode.DOWN);
+                    return;
+                }
+            } catch (IllegalArgumentException ignored){}
+        }
+        this.amount = amount;
     }
 
     public String getCurrency() {
@@ -112,6 +123,13 @@ public class Payment {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+        if (currency != null && !currency.isEmpty()) {
+            try {
+                if (amount != null) {
+                    this.amount = this.amount.setScale(Currency.getInstance(currency).getDefaultFractionDigits(), RoundingMode.DOWN);
+                }
+            } catch (IllegalArgumentException ignored){}
+        }
     }
 
     public Date getCreated() {

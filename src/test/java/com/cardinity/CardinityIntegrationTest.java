@@ -18,6 +18,7 @@ import static org.junit.Assert.*;
 public class CardinityIntegrationTest extends CardinityBaseTest {
 
     private static CardinityClient client;
+    private static CardinityClient passthroughClient;
 
     private static final String TEST_ORDER_ID = "cardinity-SDK-test";
     private static final String TEST_PAYMENT_DESCRIPTION = "cardinity-SDK-payment";
@@ -32,6 +33,11 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         final String consumerSecret = System.getenv("CRD_SECRET");
         if (consumerKey == null || consumerSecret == null) throw new Exception("Authorization keys missing");
         client = new CardinityClient(consumerKey, consumerSecret);
+
+        final String passthroughConsumerKey = System.getenv("CRD_PASSTHROUGH_KEY");
+        final String passthroughConsumerSecret = System.getenv("CRD_PASSTHROUGH_SECRET");
+        if (passthroughConsumerKey == null || passthroughConsumerSecret == null) throw new Exception("Authorization keys missing");
+        passthroughClient = new CardinityClient(passthroughConsumerKey, passthroughConsumerSecret);
     }
 
     private static Payment getBaseCCPayment() {
@@ -48,6 +54,13 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         card.setExpMonth(1);
         card.setHolder("Cardinity Cardinity");
         payment.setPaymentInstrument(card);
+        return payment;
+    }
+
+    private static Payment getBaseCCPayment(String currency, BigDecimal amount) {
+        Payment payment = getBaseCCPayment();
+        payment.setAmount(amount);
+        payment.setCurrency(currency);
         return payment;
     }
 
@@ -97,13 +110,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     @Test
     public void testCreateApprovedPayment() {
         Payment resultPayment = createApprovedPayment();
-        assertEquals(APPROVED, resultPayment.getStatus());
-        assertNotNull(resultPayment.getId());
-        assertThat(resultPayment.getPaymentInstrument(), instanceOf(Card.class));
-        assertFalse(resultPayment.getLive());
-        assertEquals(TEST_PAYMENT_DESCRIPTION, resultPayment.getDescription());
-        assertFalse(resultPayment.isThreedsV2());
-        assertFalse(resultPayment.isThreedsV1());
+        assertResultPayment(resultPayment);
     }
 
     @Test
@@ -130,13 +137,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         Result<Payment> initialResult = client.createPayment(payment);
         assertTrue(initialResult.isValid());
         Payment resultPayment = initialResult.getItem();
-        assertEquals(APPROVED, resultPayment.getStatus());
-        assertNotNull(resultPayment.getId());
-        assertThat(resultPayment.getPaymentInstrument(), instanceOf(Card.class));
-        assertFalse(resultPayment.getLive());
-        assertEquals(TEST_PAYMENT_DESCRIPTION, resultPayment.getDescription());
-        assertFalse(resultPayment.isThreedsV2());
-        assertFalse(resultPayment.isThreedsV1());
+        assertResultPayment(resultPayment);
     }
 
     @Test
@@ -476,9 +477,30 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
         assertTrue(size <= limit);
     }
 
+    @Test
+    public void testCreateApprovedPaymentNoDecimal() {
+        Payment resultPayment = createApprovedPassthroughPayment("JPY");
+        assertResultPayment(resultPayment);
+    }
+
+    @Test
+    public void testCreateApprovedPaymentMoreDecimal() {
+        Payment resultPayment = createApprovedPassthroughPayment("KWD");
+        assertResultPayment(resultPayment);
+    }
+
     private Payment createApprovedPayment() {
         Payment payment = getBaseCCPayment();
         Result<Payment> initialResult = client.createPayment(payment);
+        assertTrue(initialResult.isValid());
+        Payment resultPayment = initialResult.getItem();
+        assertEquals(APPROVED, resultPayment.getStatus());
+        return resultPayment;
+    }
+
+    private Payment createApprovedPassthroughPayment(String currency) {
+        Payment payment = getBaseCCPayment(currency, BigDecimal.valueOf(10));
+        Result<Payment> initialResult = passthroughClient.createPayment(payment);
         assertTrue(initialResult.isValid());
         Payment resultPayment = initialResult.getItem();
         assertEquals(APPROVED, resultPayment.getStatus());
@@ -504,5 +526,15 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
             assertNull(resultPayment.getThreeds2AuthorizationInformation());
         }
         return resultPayment;
+    }
+
+    private void assertResultPayment(Payment resultPayment) {
+        assertEquals(APPROVED, resultPayment.getStatus());
+        assertNotNull(resultPayment.getId());
+        assertThat(resultPayment.getPaymentInstrument(), instanceOf(Card.class));
+        assertFalse(resultPayment.getLive());
+        assertEquals(TEST_PAYMENT_DESCRIPTION, resultPayment.getDescription());
+        assertFalse(resultPayment.isThreedsV2());
+        assertFalse(resultPayment.isThreedsV1());
     }
 }
