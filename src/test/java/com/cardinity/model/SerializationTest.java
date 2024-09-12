@@ -15,7 +15,7 @@ public class SerializationTest extends CardinityBaseTest {
     @Test
     public void testSerializePaymentWithThreeds2Data() throws IOException {
         Payment payment = new Payment();
-        payment.setAmount(new BigDecimal(20).setScale(2, RoundingMode.HALF_EVEN));
+        payment.setAmount(new BigDecimal(20));
         payment.setCurrency("EUR");
         payment.setCountry("LT");
         payment.setSettle(true);

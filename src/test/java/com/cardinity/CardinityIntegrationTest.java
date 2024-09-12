@@ -44,7 +44,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     private static Payment getBaseCCPayment() {
         Payment payment = new Payment();
         payment.setCountry("LT");
-        payment.setAmount(new BigDecimal(10).setScale(2, RoundingMode.HALF_EVEN));
+        payment.setAmount(new BigDecimal(10));
         payment.setCurrency("EUR");
         payment.setDescription(TEST_PAYMENT_DESCRIPTION);
         payment.setPaymentMethod(Payment.Method.CARD);
@@ -123,7 +123,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     @Test
     public void testCreateDeclinedPayment() {
         Payment payment = getBaseCCPayment();
-        payment.setAmount(new BigDecimal(160).setScale(2, RoundingMode.HALF_EVEN));
+        payment.setAmount(new BigDecimal(160));
         Result<Payment> result = client.createPayment(payment);
         assertTrue(result.isValid());
 
@@ -171,7 +171,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     public void testCreateApprovedRecurringPayment() {
         Payment initialResultPayment = createApprovedPayment();
         Payment payment = getBaseCCPayment();
-        payment.setAmount(new BigDecimal(20).setScale(2, RoundingMode.HALF_EVEN));
+        payment.setAmount(new BigDecimal(20));
         payment.setPaymentMethod(Payment.Method.RECURRING);
         Recurring recurringPayment = new Recurring();
         recurringPayment.setPaymentId(initialResultPayment.getId());
@@ -185,7 +185,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     public void testCreateDeclinedRecurringPayment() {
         Payment initialResultPayment = createApprovedPayment();
         Payment payment = getBaseCCPayment();
-        payment.setAmount(new BigDecimal(160).setScale(2, RoundingMode.HALF_EVEN));
+        payment.setAmount(new BigDecimal(160));
         payment.setPaymentMethod(Payment.Method.RECURRING);
         Recurring recurringPayment = new Recurring();
         recurringPayment.setPaymentId(initialResultPayment.getId());
@@ -524,7 +524,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     }
 
     private Payment createApprovedPaymentJPY() {
-        Payment payment = getBaseCCPayment("JPY", BigDecimal.valueOf(10).setScale(0, RoundingMode.HALF_EVEN));
+        Payment payment = getBaseCCPayment("JPY", BigDecimal.valueOf(10));
         Result<Payment> initialResult = passthroughClient.createPayment(payment);
         assertTrue(initialResult.isValid());
         Payment resultPayment = initialResult.getItem();
@@ -533,7 +533,7 @@ public class CardinityIntegrationTest extends CardinityBaseTest {
     }
 
     private Payment createApprovedPaymentKWD() {
-        Payment payment = getBaseCCPayment("KWD", BigDecimal.valueOf(10.000).setScale(3, RoundingMode.HALF_EVEN));
+        Payment payment = getBaseCCPayment("KWD", BigDecimal.valueOf(10.000));
         Result<Payment> initialResult = passthroughClient.createPayment(payment);
         assertTrue(initialResult.isValid());
         Payment resultPayment = initialResult.getItem();

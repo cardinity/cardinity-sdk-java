@@ -19,7 +19,7 @@ public class PaymentValidatorTest {
     @Before
     public void setUp() {
         payment = new Payment();
-        payment.setAmount(BigDecimal.ONE.setScale(2, RoundingMode.HALF_EVEN));
+        payment.setAmount(BigDecimal.ONE);
         payment.setCountry("LT");
         payment.setCurrency("EUR");
         payment.setSettle(true);
@@ -57,7 +57,7 @@ public class PaymentValidatorTest {
 
     @Test(expected = ValidationException.class)
     public void testValidateWrongAmount() throws Exception {
-        payment.setAmount(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN));
+        payment.setAmount(BigDecimal.ZERO);
         paymentValidator.validate(payment);
     }
 
