@@ -19,7 +19,7 @@ Add this dependency to your project's POM:
 <dependency>
   <groupId>com.cardinity</groupId>
   <artifactId>cardinity-sdk-java</artifactId>
-  <version>1.10.0</version>
+  <version>1.11.0</version>
 </dependency>
 ```
 
@@ -28,7 +28,7 @@ Add this dependency to your project's POM:
 Add this dependency to your project's build file:
 
 ```groovy
-compile "com.cardinity:cardinity-sdk-java:1.10.0"
+compile "com.cardinity:cardinity-sdk-java:1.11.0"
 ```
 
 ### Other

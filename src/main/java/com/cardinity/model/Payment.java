@@ -108,9 +108,8 @@ public class Payment {
     public void setAmount(BigDecimal amount) {
         if (currency != null) {
             try {
-                Currency currencyInstance = Currency.getInstance(currency);
                 if (amount != null) {
-                    this.amount = amount.setScale(currencyInstance.getDefaultFractionDigits(), RoundingMode.DOWN);
+                    this.amount = amount.setScale(Currency.getInstance(currency).getDefaultFractionDigits(), RoundingMode.DOWN);
                     return;
                 }
             } catch (IllegalArgumentException ignored){}
@@ -126,9 +125,8 @@ public class Payment {
         this.currency = currency;
         if (currency != null && !currency.isEmpty()) {
             try {
-                Currency currencyInstance = Currency.getInstance(currency);
                 if (amount != null) {
-                    this.amount = this.amount.setScale(currencyInstance.getDefaultFractionDigits(), RoundingMode.DOWN);
+                    this.amount = this.amount.setScale(Currency.getInstance(currency).getDefaultFractionDigits(), RoundingMode.DOWN);
                 }
             } catch (IllegalArgumentException ignored){}
         }
