@@ -111,11 +111,11 @@ public class Payment {
                 Currency currencyInstance = Currency.getInstance(currency);
                 if (amount != null) {
                     this.amount = amount.setScale(currencyInstance.getDefaultFractionDigits(), RoundingMode.DOWN);
+                    return;
                 }
             } catch (IllegalArgumentException ignored){}
-        } else {
-            this.amount = amount;
         }
+        this.amount = amount;
     }
 
     public String getCurrency() {
